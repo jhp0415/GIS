@@ -82,6 +82,7 @@ public class PlaceSearchActivity extends FragmentActivity  implements OnMapReady
                 List<Address> addressList = null;
                 try {
                     // editText에 입력한 텍스트(주소, 지역, 장소 등)을 지오 코딩을 이용해 변환
+                    //getFromLocationName() : 주소 -> 위도, 경도
                     addressList = geocoder.getFromLocationName(
                             str, // 주소
                             10); // 최대 검색 결과 개수
@@ -89,21 +90,25 @@ public class PlaceSearchActivity extends FragmentActivity  implements OnMapReady
                 catch (IOException e) {
                     e.printStackTrace();
                 }
-                Log.d("debugging", "addressList : " + addressList.get(0).toString());
+
+//                Log.d("debugging", "data : " + addressList.get(0).getFeatureName() + " "
+//                        + addressList.get(0).getLatitude() + " "
+//                        + addressList.get(0).getLongitude() );
+
+
                 // 콤마를 기준으로 split
-                String []splitStr = addressList.get(0).toString().split(",");
-                String address = splitStr[0].substring(splitStr[0].indexOf("\"") + 1,splitStr[0].length()); // 주소
+//                String []splitStr = addressList.get(0).toString().split(",");
+//                String address = splitStr[0].substring(splitStr[0].indexOf("\"") + 1,splitStr[0].length()); // 주소
+
+                String address = addressList.get(0).getAddressLine(0);
+                String latitude = addressList.get(0).getLatitude().toString();
+                String longitude = addressList.get(0).getLongitude().toString();
+
                 Log.d("debugging", "address : " + address);
 
-                //위도, 경도 인덱스 번호 찾기
-                int indexLatitue = -1;
-                int indexLongitude = -1;
 
-                Log.d("debugging", "index : " + indexLatitue + " " + indexLongitude);
-
-
-                String latitude = splitStr[11].substring(splitStr[11].indexOf("=") + 1); // 위도
-                String longitude = splitStr[13].substring(splitStr[13].indexOf("=") + 1); // 경도
+//                String latitude = splitStr[11].substring(splitStr[11].indexOf("=") + 1); // 위도
+//                String longitude = splitStr[13].substring(splitStr[13].indexOf("=") + 1); // 경도
                 Log.d("debugging", "latitude : " + latitude);
                 Log.d("debugging", "longitude : " + longitude);
 
