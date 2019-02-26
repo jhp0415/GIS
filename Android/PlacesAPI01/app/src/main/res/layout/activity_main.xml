@@ -7,11 +7,11 @@
 
 
     <Button
-        android:id="@+id/current_btn"
+        android:id="@+id/current_test_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="CurrentPlace" />
+        android:text="CurrentTest" />
 
     <Button
         android:id="@+id/Search_btn"
@@ -19,6 +19,13 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="SearchPlace" />
+
+    <Button
+        android:id="@+id/current_place_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="CurrentPlace" />
 
 
 </LinearLayout>

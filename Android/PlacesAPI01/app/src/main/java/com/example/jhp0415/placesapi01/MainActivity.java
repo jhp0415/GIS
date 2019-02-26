@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button1=(Button)findViewById(R.id.current_btn);
+        Button button1=(Button)findViewById(R.id.current_test_btn);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -28,6 +28,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, PlaceSearchActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button button3=(Button)findViewById(R.id.current_place_btn);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CurrentPlaceActivity.class);
                 startActivity(intent);
             }
         });

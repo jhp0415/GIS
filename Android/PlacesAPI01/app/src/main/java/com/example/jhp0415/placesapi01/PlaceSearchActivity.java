@@ -1,8 +1,5 @@
 package com.example.jhp0415.placesapi01;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -20,6 +17,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.List;
+
+import androidx.fragment.app.FragmentActivity;
 
 public class PlaceSearchActivity extends FragmentActivity  implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -101,8 +100,8 @@ public class PlaceSearchActivity extends FragmentActivity  implements OnMapReady
 //                String address = splitStr[0].substring(splitStr[0].indexOf("\"") + 1,splitStr[0].length()); // 주소
 
                 String address = addressList.get(0).getAddressLine(0);
-                String latitude = addressList.get(0).getLatitude().toString();
-                String longitude = addressList.get(0).getLongitude().toString();
+                Double latitude = addressList.get(0).getLatitude();
+                Double longitude = addressList.get(0).getLongitude();
 
                 Log.d("debugging", "address : " + address);
 
@@ -113,7 +112,8 @@ public class PlaceSearchActivity extends FragmentActivity  implements OnMapReady
                 Log.d("debugging", "longitude : " + longitude);
 
                 // 좌표(위도, 경도) 생성
-                LatLng point = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+//                LatLng point = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                LatLng point = new LatLng(latitude, longitude);
                 // 마커 생성
                 MarkerOptions mOptions2 = new MarkerOptions();
                 mOptions2.title("search result");
@@ -125,7 +125,6 @@ public class PlaceSearchActivity extends FragmentActivity  implements OnMapReady
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,15));
             }
         });
-        ////////////////////
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
