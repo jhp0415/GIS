@@ -275,7 +275,16 @@ public class test extends AppCompatActivity
                 }
                 break;
         }
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     //GPS와 NETWORK 활성화 여부 체크하기
