@@ -280,11 +280,27 @@ public class test extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart");
+
+        // 퍼미션 권한 등 모든것이 갖춰져 있을 경우, 바로 위치를 받아온다
+        if (checkPermission()) {
+            Log.d(TAG, "onStart : call mFusedLocationClient.requestLocationUpdates");
+            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+
+            // 맵 카메라를 현재위치로 이동
+            if (mGoogleMap != null)
+                mGoogleMap.setMyLocationEnabled(true);
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        // 앱을 종료하는 경우
+        if(mFusedLocationClient != null) {
+            Log.d(TAG, "onStop : call stopLocationUpdates");
+            mFusedLocationClient.removeLocationUpdates(locationCallback);
+        }
     }
 
     //GPS와 NETWORK 활성화 여부 체크하기
