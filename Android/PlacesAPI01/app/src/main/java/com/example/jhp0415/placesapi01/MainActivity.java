@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.jhp0415.placesapi01.currentplace.CurrentPlaceActivity;
+import com.example.jhp0415.placesapi01.searchplace.PlaceSearchActivity;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -14,11 +17,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button1=(Button)findViewById(R.id.current_test_btn);
+        Button button1=(Button)findViewById(R.id.current_place_btn);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CurrentPlaceTestActivity.class);
+                Intent intent = new Intent(MainActivity.this, CurrentPlaceActivity.class);
                 startActivity(intent);
             }
         });
@@ -32,14 +35,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button button3=(Button)findViewById(R.id.current_place_btn);
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CurrentPlaceActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
 
 
