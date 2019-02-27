@@ -30,6 +30,7 @@
         <activity android:name=".currentplace.CurrentPlaceActivity" />
         <activity android:name=".searchplace.PlaceSearchActivity" />
         <activity android:name=".searchplace.test" />
+
     </application>
 
 </manifest>

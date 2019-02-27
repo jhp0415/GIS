@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.jhp0415.placesapi01.currentplace.CurrentPlaceActivity;
-import com.example.jhp0415.placesapi01.searchplace.PlaceSearchActivity;
+import com.example.jhp0415.placesapi01.searchplace.test;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PlaceSearchActivity.class);
+                Intent intent = new Intent(MainActivity.this,  test.class);
                 startActivity(intent);
             }
         });

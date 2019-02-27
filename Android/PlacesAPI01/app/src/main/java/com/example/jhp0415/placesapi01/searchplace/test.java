@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.jhp0415.placesapi01.R;
 import com.google.android.gms.common.api.Status;
@@ -23,12 +24,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class test extends AppCompatActivity
@@ -39,19 +42,16 @@ public class test extends AppCompatActivity
     private EditText editText;
     private Marker currentMarker = null;
     private static final String TAG = "SEARCH";
-
-    //자동완성-------------------------------------------------
-    int AUTOCOMPLETE_REQUEST_CODE = 1;
-
-    // Set the fields to specify which types of place data to
-    // return after the user has made a selection.
-    private List<Place.Field> fields;
+    private AutocompleteSupportFragment autocompleteSupportFragment;
+    private TextView responseView;      //주소 결과 표시
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 23487;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_search);
 
+        Log.d(TAG, "test 액티비티 실행");
         editText = (EditText) findViewById(R.id.editText);
         button=(Button)findViewById(R.id.button);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -60,11 +60,33 @@ public class test extends AppCompatActivity
         mapFragment.getMapAsync((OnMapReadyCallback) this);
 
 
-        //-------자동완성------------------------------------------------------------
+        // ----------------------------자동완성 Autocomplete----------------------------------------
+        responseView = findViewById(R.id.response);
+        autocompleteSupportFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-        fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+        // Specify the types of place data to return.
+        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
 
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                responseView.setText(
+                        "Place: " + place.getName() + ", " + place.getId());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+                responseView.setText(status.getStatusMessage());
+            }
+        });
     }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -97,16 +119,6 @@ public class test extends AppCompatActivity
         button.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v){
-
-                // 자동완성
-                // Start the autocomplete intent.
-                Intent intent = new Autocomplete.IntentBuilder(
-                        AutocompleteActivityMode.FULLSCREEN, fields)
-                        .build(SearchAutocomplete);
-                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-
-                //-----------------------------------------------------------------------------
-
                 String inputAddr = editText.getText().toString();
                 List<Address> addressList = null;
                 try {
@@ -162,21 +174,27 @@ public class test extends AppCompatActivity
         mGoogleMap.moveCamera(cameraUpdate);
     }
 
-    // 자동완성 ----------------------------------------------------------------------------------
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(data);
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+            if (resultCode == AutocompleteActivity.RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(intent);
+                responseView.setText(
+                        "Place: " + place.getName() + ", " + place.getId());
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
-                Status status = Autocomplete.getStatusFromIntent(data);
-                Log.i(TAG, status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
+                Status status = Autocomplete.getStatusFromIntent(intent);
+                responseView.setText(status.getStatusMessage());
+            } else if (resultCode == AutocompleteActivity.RESULT_CANCELED) {
                 // The user canceled the operation.
             }
         }
+
+        // Required because this class extends AppCompatActivity which extends FragmentActivity
+        // which implements this method to pass onActivityResult calls to child fragments
+        // (eg AutocompleteFragment).
+        super.onActivityResult(requestCode, resultCode, intent);
     }
+
+
 
 }
