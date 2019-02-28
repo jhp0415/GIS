@@ -1,6 +1,5 @@
 package com.example.jhp0415.placesapi01.searchplace;
 
-import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -145,12 +144,5 @@ public class PlaceSearchActivity extends AppCompatActivity
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 15);
         mGoogleMap.moveCamera(cameraUpdate);
     }
-
-    @Override
-    public void onActivityResult(int i, int i1, Intent intent) {
-        super.onActivityResult(i, i1, intent);
-    }
-
-
 
 }

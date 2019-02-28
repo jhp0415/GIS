@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.jhp0415.placesapi01.currentplace.CurrentPlaceActivity;
+import com.example.jhp0415.placesapi01.searchplace.PlaceSearchActivity;
 import com.example.jhp0415.placesapi01.searchplace.test;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +29,15 @@ public class MainActivity extends AppCompatActivity {
 
         Button button2=(Button)findViewById(R.id.Search_btn);
         button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,  PlaceSearchActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button button3=(Button)findViewById(R.id.test);
+        button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,  test.class);
