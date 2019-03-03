@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    tools:context=".MainActivity">
 
-    <fragment
-        android:id="@+id/place_autocomplete_fragment"
+
+    <Button
+        android:id="@+id/current_place_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        />
-</RelativeLayout>
+        android:layout_weight="1"
+        android:text="CurrentPlace" />
+
+    <Button
+        android:id="@+id/place_autocomplete_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Autocomplete" />
+
+    <Button
+        android:id="@+id/place_photos_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Place Photos" />
+
+    <Button
+        android:id="@+id/place_picker_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Place Picker" />
+
+
+</LinearLayout>

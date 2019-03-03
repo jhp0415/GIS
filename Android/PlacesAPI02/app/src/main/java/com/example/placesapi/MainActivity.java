@@ -1,23 +1,12 @@
 package com.example.placesapi;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.api.model.Place;
-
-import java.util.Arrays;
-import java.util.List;
+import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = "TEST";
 
 
     @Override
@@ -25,34 +14,42 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize Places.
-        Places.initialize(getApplicationContext(), "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
+        Button button1=(Button)findViewById(R.id.current_place_btn);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CurrentPlaceActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        // Create a new Places client instance.
-        PlacesClient placesClient = Places.createClient(this);
+        Button button2=(Button)findViewById(R.id.place_autocomplete_btn);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,  PlaceAutocompleteActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        List<Place.Field> arrays = Arrays.asList(Place.Field.NAME,Place.Field.ADDRESS);
+        Button button3=(Button)findViewById(R.id.place_photos_btn);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,  PlacePhotosActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        // Setup Autocomplete Support Fragment
-        final AutocompleteSupportFragment autocompleteSupportFragment =
-                (AutocompleteSupportFragment)
-                        getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        Button button4=(Button)findViewById(R.id.place_picker_btn);
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,  PlacePickerActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        autocompleteSupportFragment.setPlaceFields(arrays);
-        autocompleteSupportFragment.setOnPlaceSelectedListener(
-                new PlaceSelectionListener() {
-                    @Override
-                    public void onPlaceSelected(Place place) {
-                        Log.d(TAG, "자동완성 됐나?????");
-                        Log.d(TAG, "Place: " + place.getName() + ", " + place.getId());
-                    }
-
-                    @Override
-                    public void onError(Status status) {
-                        Log.d(TAG, "자동완성 에러!!!!!!");
-                        Log.d(TAG, "An error occurred: " + status);
-                    }
-                });
     }
 
 
