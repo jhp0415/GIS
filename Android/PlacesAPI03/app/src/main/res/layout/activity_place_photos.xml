@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PlacePhotosActivity"
+    tools:context=".view.PlacePhotosActivity"
     android:orientation="vertical">
 
     <LinearLayout
@@ -40,10 +40,10 @@
             android:text="주소"/>
 
         <TextView
-        android:id="@+id/photos_latlng_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="위치"/>
+            android:id="@+id/photos_latlng_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="위치"/>
         <TextView
             android:id="@+id/photos_id_textview"
             android:layout_width="match_parent"

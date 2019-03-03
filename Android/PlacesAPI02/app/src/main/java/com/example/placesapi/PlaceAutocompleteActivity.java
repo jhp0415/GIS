@@ -32,7 +32,7 @@ public class PlaceAutocompleteActivity extends AppCompatActivity {
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);
 
-        List<Place.Field> arrays = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS);
+        List<Place.Field> arrays = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ID);
 
 
         // Setup Autocomplete Support Fragment
@@ -46,8 +46,8 @@ public class PlaceAutocompleteActivity extends AppCompatActivity {
                     @Override
                     public void onPlaceSelected(Place place) {
                         Log.d(TAG, "자동완성 됐나?????");
-                        Log.d(TAG, "Place: " + place.getName() + ", " + place.getId());
-                        textView.setText("Place: " + place.getName() + ", " + place.getId());
+                        Log.d(TAG, "Place: " + place.getName() + ", " + place.getAddress() + ", " + place.getId());
+                        textView.setText("Place: " + place.getName() + ", " + place.getAddress() + ", " + place.getId());
                     }
 
                     @Override
