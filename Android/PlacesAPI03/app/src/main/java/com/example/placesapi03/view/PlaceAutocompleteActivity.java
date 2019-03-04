@@ -7,16 +7,14 @@ import android.widget.TextView;
 
 import com.example.placesapi03.R;
 import com.example.placesapi03.contract.PlaceAutocompleteContract;
+import com.example.placesapi03.model.PlaceAutocompleteModel;
 import com.example.placesapi03.presenter.PlaceAutocompletePresenter;
-import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 
 public class PlaceAutocompleteActivity extends AppCompatActivity implements PlaceAutocompleteContract.View {
     private PlaceAutocompleteContract.Presenter presenter;
-    private AutocompleteSupportFragment autocompleteSupportFragment;
-    private PlacesClient placesClient;
+    private static AutocompleteSupportFragment autocompleteSupportFragment;
     private TextView textView;
     private String TAG = "DEBUG";
 
@@ -27,17 +25,6 @@ public class PlaceAutocompleteActivity extends AppCompatActivity implements Plac
 
         viewInit();
         presenterInit();
-        getPlaceAutocompleteResult();
-    }
-
-    public void presenterInit(){
-        presenter = new PlaceAutocompletePresenter(this);
-        //presenter.setAutocompleteSupportFragment(autocompleteSupportFragment);
-        presenter.viewToModelCallback(autocompleteSupportFragment);
-    }
-
-    public void getPlaceAutocompleteResult() {
-        presenter.loadResult();
     }
 
     @Override
@@ -48,11 +35,23 @@ public class PlaceAutocompleteActivity extends AppCompatActivity implements Plac
         autocompleteSupportFragment =
                 (AutocompleteSupportFragment)
                         getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+    }
 
-        // Initialize Places.
-        Places.initialize(getApplicationContext(), "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
-        // Create a new Places client instance.
-        placesClient = Places.createClient(this);
+    public void presenterInit(){
+        presenter = new PlaceAutocompletePresenter(
+                this,
+               new PlaceAutocompleteModel(getApplicationContext(), autocompleteSupportFragment));
+    }
+
+    @Override
+    public void setPresenter(PlaceAutocompleteContract.Presenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        presenter.start();
     }
 
     @Override

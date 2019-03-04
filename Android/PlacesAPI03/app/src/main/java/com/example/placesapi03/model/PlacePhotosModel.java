@@ -1,10 +1,11 @@
 package com.example.placesapi03.model;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.example.placesapi03.contract.PlacePhotosContract;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
@@ -14,22 +15,22 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import java.util.Arrays;
 import java.util.List;
 
-public class PlacePhotosModel implements PlacePhotosContract.Model {
-    private PlacePhotosContract.Presenter presenter;
+public class PlacePhotosModel {
+    private Context context;
     private PlacesClient placesClient;
+    private Bitmap bitmap;
     private String TAG = "DEBUG";
 
-    public PlacePhotosModel(PlacePhotosContract.Presenter presenter){
-        this.presenter = presenter;
+    public PlacePhotosModel(Context context){
+        this.context = context;
+
+        // Initialize Places.
+        Places.initialize(this.context, "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
+        // Create a new Places client instance.
+        placesClient = Places.createClient(this.context);
     }
 
-    @Override
-    public void setPlaceClient(PlacesClient placeClient) {
-        this.placesClient = placeClient;
-    }
-
-    @Override
-    public void getResult(Place mplace) {
+    public Bitmap getResult(Place mplace) {
         // 장소의 ID 입력하기
         String placeId = mplace.getId().toString();
 
@@ -53,10 +54,8 @@ public class PlacePhotosModel implements PlacePhotosContract.Model {
                     .setMaxHeight(300) // Optional.
                     .build();
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                bitmap = fetchPhotoResponse.getBitmap();
 
-                // 콜백
-                presenter.modelToViewCallback(bitmap, mplace);
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     ApiException apiException = (ApiException) exception;
@@ -66,5 +65,6 @@ public class PlacePhotosModel implements PlacePhotosContract.Model {
                 }
             });
         });
+        return bitmap;
     }
 }

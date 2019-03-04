@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.placesapi03.GlobalApplication;
 import com.example.placesapi03.R;
 
 public class MainActivity extends AppCompatActivity
@@ -36,8 +35,6 @@ public class MainActivity extends AppCompatActivity
 
     // 뷰 초기화
     public void init() {
-        //globalApplication = (GlobalApplication) getApplication();
-
         button1=(Button)findViewById(R.id.current_place_btn);
         button2=(Button)findViewById(R.id.place_autocomplete_btn);
         button3=(Button)findViewById(R.id.place_photos_btn);
@@ -52,16 +49,13 @@ public class MainActivity extends AppCompatActivity
         Intent intent;
         switch (v.getId()){
             case R.id.current_place_btn:
-                intent = new Intent(MainActivity.this, CurrentPlaceActivity.class);
-                startActivity(intent);
+                getApplicationContext().startActivity(new Intent(this, CurrentPlaceActivity.class));
                 break;
             case R.id.place_autocomplete_btn:
-                intent = new Intent(MainActivity.this, PlaceAutocompleteActivity.class);
-                startActivity(intent);
+                getApplicationContext().startActivity(new Intent(this, PlaceAutocompleteActivity.class));
                 break;
             case R.id.place_photos_btn:
-                intent = new Intent(MainActivity.this, PlacePhotosActivity.class);
-                startActivity(intent);
+                getApplicationContext().startActivity(new Intent(this, PlacePhotosActivity.class));
                 break;
         }
     }

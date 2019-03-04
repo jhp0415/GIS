@@ -2,6 +2,7 @@ package com.example.placesapi03.view;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -9,8 +10,8 @@ import com.example.placesapi03.Adapter.ListViewAdapter;
 import com.example.placesapi03.R;
 import com.example.placesapi03.contract.CurrentPlaceContract;
 import com.example.placesapi03.data.ListItem;
+import com.example.placesapi03.model.CurrentPlaceModel;
 import com.example.placesapi03.presenter.CurrentPlacePresenter;
-import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
@@ -33,16 +34,11 @@ public class CurrentPlaceActivity extends AppCompatActivity implements CurrentPl
 
         viewInit();
         presenterInit();
-        getCurrentPlaceResult();
     }
 
     public void presenterInit(){
-        presenter = new CurrentPlacePresenter(this);
-        presenter.viewToModelCallback(placesClient, getApplicationContext());
-    }
-
-    public void getCurrentPlaceResult(){
-        presenter.loadResult();
+        presenter = new CurrentPlacePresenter(this,
+                new CurrentPlaceModel(getApplicationContext()));
     }
 
     @Override
@@ -53,15 +49,23 @@ public class CurrentPlaceActivity extends AppCompatActivity implements CurrentPl
         arrayList = new ArrayList<ListItem>();
         listViewAdapter = new ListViewAdapter(CurrentPlaceActivity.this, arrayList);
         listView.setAdapter(listViewAdapter);
+    }
 
-        // Initialize Places.
-        Places.initialize(this, "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
-        // Create a new Places client instance.
-        placesClient = Places.createClient(this);
+    @Override
+    public void setPresenter(CurrentPlaceContract.Presenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "view : onResume() 실행");
+        presenter.start();
     }
 
     @Override
     public void updateView(ArrayList<PlaceLikelihood> result) {
+        Log.d(TAG, "view : updateView() 실행");
         textView.setText(result.get(0).getPlace().getName() + ", " + result.get(0).getLikelihood() + "\n" +
                 result.get(0).getPlace().getAddress() + result.get(0).getPlace().getLatLng().latitude + result.get(0).getPlace().getLatLng().longitude);
 

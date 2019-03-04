@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.example.placesapi03.R;
 import com.example.placesapi03.contract.PlaceAutocompleteContract;
 import com.example.placesapi03.contract.PlacePhotosContract;
+import com.example.placesapi03.model.PlaceAutocompleteModel;
+import com.example.placesapi03.model.PlacePhotosModel;
 import com.example.placesapi03.presenter.PlaceAutocompletePresenter;
 import com.example.placesapi03.presenter.PlacePhotosPresenter;
 import com.google.android.libraries.places.api.Places;
@@ -18,7 +20,6 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 
 public class PlacePhotosActivity extends AppCompatActivity
         implements PlacePhotosContract.View, PlaceAutocompleteContract.View {
-
     private PlacePhotosContract.Presenter presenterPhotos;
     private PlaceAutocompleteContract.Presenter presenterAuto;
     private AutocompleteSupportFragment autocompleteSupportFragment;
@@ -36,22 +37,13 @@ public class PlacePhotosActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_photos);
 
+        // Initialize Places.
+        Places.initialize(getApplicationContext(), "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
+        // Create a new Places client instance.
+        placesClient = Places.createClient(this);
+
         viewInit();
-
         presenterInit();
-        getPlacePhotosResult();
-    }
-
-    public void presenterInit(){
-        presenterPhotos = new PlacePhotosPresenter(this);
-        presenterPhotos.viewToModelCallback(placesClient);
-
-        presenterAuto = new PlaceAutocompletePresenter(this);
-        presenterAuto.viewToModelCallback(autocompleteSupportFragment);
-    }
-
-    public void getPlacePhotosResult(){
-        presenterAuto.loadResult();
     }
 
     @Override
@@ -66,11 +58,31 @@ public class PlacePhotosActivity extends AppCompatActivity
         autocompleteSupportFragment =
                 (AutocompleteSupportFragment)
                         getSupportFragmentManager().findFragmentById(R.id.place_photo_and_autocomplete_fragment);
+    }
 
-        // Initialize Places.
-        Places.initialize(getApplicationContext(), "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
-        // Create a new Places client instance.
-        placesClient = Places.createClient(this);
+    public void presenterInit(){
+        presenterPhotos = new PlacePhotosPresenter(this,
+                new PlacePhotosModel(getApplicationContext()));
+
+        presenterAuto  = new PlaceAutocompletePresenter(
+                this,
+                new PlaceAutocompleteModel(getApplicationContext(), autocompleteSupportFragment));
+    }
+
+    @Override
+    public void setPresenter(PlaceAutocompleteContract.Presenter presenter) {
+        this.presenterAuto = presenter;
+    }
+
+    @Override
+    public void setPresenter(PlacePhotosContract.Presenter presenter) {
+        this.presenterPhotos = presenter;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        presenterAuto.start();
     }
 
     @Override
@@ -83,12 +95,12 @@ public class PlacePhotosActivity extends AppCompatActivity
     }
 
     @Override
-    public void updateView(Place place) {
-        // NO Action
+    public void getPlaceResult(Place place) {
+        presenterPhotos.start(place);
     }
 
     @Override
-    public void getPlaceResult(Place place) {
-        presenterPhotos.loadResult(place);
+    public void updateView(Place place) {
+        // NO Action
     }
 }

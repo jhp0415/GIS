@@ -6,32 +6,37 @@ import android.util.Log;
 import com.example.placesapi03.contract.PlacePhotosContract;
 import com.example.placesapi03.model.PlacePhotosModel;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
 
 public class PlacePhotosPresenter implements PlacePhotosContract.Presenter {
     private PlacePhotosContract.View view;
-    private PlacePhotosContract.Model model;
-    private PlacesClient placesClient;
+    private PlacePhotosModel model;
 
     private String TAG = "DEBUG";
 
-    public PlacePhotosPresenter(PlacePhotosContract.View view) {
+    public PlacePhotosPresenter(PlacePhotosContract.View view, PlacePhotosModel model) {
         this.view = view;
-        model = new PlacePhotosModel(this);
+        this.model = model;
+
+        this.view.setPresenter(this);
+    }
+
+    @Override
+    public void start(Place place) {
+        loadResult(place);
     }
 
     @Override
     public void loadResult(Place place) {
-        this.model.getResult(place);
+        callback(model.getResult(place), place);
     }
 
     @Override
-    public void modelToViewCallback(Bitmap bitmap, Place place) {
-        this.view.updateView(bitmap, place);
-    }
+    public void callback(Bitmap bitmap, Place place) {
+        if (bitmap != null && place != null) {
+            this.view.updateView(bitmap, place);
+        } else {
+            Log.d(TAG, "bitmap or place is null...");
+        }
 
-    @Override
-    public void viewToModelCallback(PlacesClient placesClient) {
-        model.setPlaceClient(placesClient);
     }
 }

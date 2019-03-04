@@ -5,9 +5,9 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.example.placesapi03.contract.CurrentPlaceContract;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
@@ -20,28 +20,26 @@ import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class CurrentPlaceModel implements CurrentPlaceContract.Model {
-    private CurrentPlaceContract.Presenter presenter;
+public class CurrentPlaceModel {
     private String TAG = "DEBUG";
     private ArrayList<PlaceLikelihood> arrayList;
     private PlacesClient placesClient;
     private Context context;
 
-    public CurrentPlaceModel(CurrentPlaceContract.Presenter presenter){
-        this.presenter = presenter;
-        arrayList = new ArrayList<PlaceLikelihood>();
-    }
-
-    @Override
-    public void setParameter(PlacesClient placesClient, Context context) {
-        this.placesClient = placesClient;
+    public CurrentPlaceModel(Context context){
         this.context = context;
+        arrayList = new ArrayList<PlaceLikelihood>();
+
+        // Initialize Places.
+        Places.initialize(this.context, "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
+        // Create a new Places client instance.
+        placesClient = Places.createClient(this.context);
+        Log.d(TAG, "PlaceAutocompleteModel : 생성자 실행");
+
     }
 
-    @Override
-    public void getResult() {
-        Log.d(TAG, "model : getResult 실행");
-
+    public ArrayList<PlaceLikelihood> getResult() {
+        Log.d(TAG, "Model : getResult() 실행");
         // Use fields to define the data types to return.
         List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ID, Place.Field.LAT_LNG);
 
@@ -62,10 +60,6 @@ public class CurrentPlaceModel implements CurrentPlaceContract.Model {
                                 placeLikelihood.getLikelihood()));
                         arrayList.add(placeLikelihood);
                     }
-
-                    // presenter에 데이터 전달 -> view로 데이터 업데이트
-                    presenter.modelToViewCallback(arrayList);
-
                 } else {
                     Exception exception = task.getException();
                     if (exception instanceof ApiException) {
@@ -75,5 +69,7 @@ public class CurrentPlaceModel implements CurrentPlaceContract.Model {
                 }
             });
         }
+        return arrayList;
     }
+
 }
