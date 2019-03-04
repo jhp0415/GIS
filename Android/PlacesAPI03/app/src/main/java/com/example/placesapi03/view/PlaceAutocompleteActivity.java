@@ -9,6 +9,7 @@ import com.example.placesapi03.R;
 import com.example.placesapi03.contract.PlaceAutocompleteContract;
 import com.example.placesapi03.presenter.PlaceAutocompletePresenter;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 
@@ -26,12 +27,13 @@ public class PlaceAutocompleteActivity extends AppCompatActivity implements Plac
         init();
 
         presenter = new PlaceAutocompletePresenter(this, autocompleteSupportFragment);
-        presenter.placeAutocomplete();
+        presenter.loadResult();
     }
 
     @Override
     public void init() {
         textView = (TextView) findViewById(R.id.place_autocomplete_result_textview);
+
         // Setup Autocomplete Support Fragment
         autocompleteSupportFragment =
                 (AutocompleteSupportFragment)
@@ -45,9 +47,14 @@ public class PlaceAutocompleteActivity extends AppCompatActivity implements Plac
     }
 
     @Override
-    public void updateView(String result) {
+    public void updateView(Place place) {
         // UI 갱신
-        Log.d(TAG, "MainActivity updateView : " + result);
-        textView.setText(result);
+        Log.d(TAG, "MainActivity : updateView 실행" );
+        textView.setText(place.getName() + place.getAddress() + place.getId() + place.getLatLng().latitude + place.getLatLng().longitude);
+    }
+
+    @Override
+    public void getPlaceResult(Place place) {
+
     }
 }

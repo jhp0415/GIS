@@ -3,36 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.MainActivity">
+    tools:context=".view.MainActivity"
+    android:orientation="vertical">
 
 
     <Button
         android:id="@+id/current_place_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="CurrentPlace" />
 
     <Button
         android:id="@+id/place_autocomplete_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="Autocomplete" />
 
     <Button
         android:id="@+id/place_photos_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="Place Photos" />
-
-    <Button
-        android:id="@+id/place_picker_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Place Picker" />
-
 
 </LinearLayout>

@@ -3,6 +3,7 @@ package com.example.placesapi03.presenter;
 import android.util.Log;
 
 import com.example.placesapi03.contract.PlaceAutocompleteContract;
+import com.example.placesapi03.model.PlaceAutocompleteModel;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
@@ -13,43 +14,27 @@ import java.util.List;
 
 public class PlaceAutocompletePresenter implements PlaceAutocompleteContract.Presenter {
     private PlaceAutocompleteContract.View view;
+    private PlaceAutocompleteContract.Model model;
     private AutocompleteSupportFragment autocompleteSupportFragment;
     private String TAG = "DEBUG";
-    private String result ="";
-    private List<Place.Field> arrays;
+
+    private Place place;
+    private Status status = Status.RESULT_TIMEOUT;
 
     public PlaceAutocompletePresenter(PlaceAutocompleteContract.View view, AutocompleteSupportFragment autocompleteSupportFragment){
         this.view = view;
         this.autocompleteSupportFragment = autocompleteSupportFragment;
+        model = new PlaceAutocompleteModel(this);
     }
 
     @Override
-    public void placeAutocomplete() {
-        // 데이터 처리
-        // 자동 완성 예제
-        arrays = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ID, Place.Field.LAT_LNG);
+    public void loadResult() {
+        model.getResult(this.autocompleteSupportFragment);
+    }
 
-        // Setup Autocomplete Support Fragment
-        autocompleteSupportFragment.setPlaceFields(arrays);
-        autocompleteSupportFragment.setOnPlaceSelectedListener(
-                new PlaceSelectionListener() {
-                    @Override
-                    public void onPlaceSelected(Place place) {
-                        Log.d(TAG, "Place: " + place.getName() + ", " + place.getAddress() + ", " + place.getId());
-                        result = "Place: " + place.getName() + ", " + place.getAddress() + ", " + place.getId();
-                        //결과 반영
-                        view.updateView(result);
-                    }
-
-                    @Override
-                    public void onError(Status status) {
-                        Log.d(TAG, "An error occurred: " + status);
-                        result = "Autocomplete Error : Null Data";
-                        //결과 반영
-                        view.updateView(result);
-                    }
-                });
-
-
+    @Override
+    public void callback(Place place) {
+        view.updateView(place);
+        view.getPlaceResult(place);
     }
 }
