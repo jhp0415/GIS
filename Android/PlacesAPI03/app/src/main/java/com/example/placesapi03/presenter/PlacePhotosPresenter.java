@@ -15,21 +15,23 @@ public class PlacePhotosPresenter implements PlacePhotosContract.Presenter {
 
     private String TAG = "DEBUG";
 
-    public PlacePhotosPresenter(PlacePhotosContract.View view, PlacesClient placesClient) {
+    public PlacePhotosPresenter(PlacePhotosContract.View view) {
         this.view = view;
-        this.placesClient = placesClient;
-        model = new PlacePhotosModel(this, this.placesClient);
+        model = new PlacePhotosModel(this);
     }
 
     @Override
     public void loadResult(Place place) {
-        Log.d(TAG, "PlacePhotosPresenter loadResult() 실행");
         this.model.getResult(place);
     }
 
     @Override
-    public void callback(Bitmap bitmap, Place place) {
-        Log.d(TAG, "PlacePhotosPresenter callback() 실행");
+    public void modelToViewCallback(Bitmap bitmap, Place place) {
         this.view.updateView(bitmap, place);
+    }
+
+    @Override
+    public void viewToModelCallback(PlacesClient placesClient) {
+        model.setPlaceClient(placesClient);
     }
 }

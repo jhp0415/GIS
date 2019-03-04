@@ -5,17 +5,21 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 
 public interface PlaceAutocompleteContract {
     interface View {
-        void init();
+        void viewInit();
         void updateView(Place place);
         void getPlaceResult(Place place);
     }
 
     interface Presenter {
+        void setAutocompleteSupportFragment(AutocompleteSupportFragment autocompleteSupportFragment);
+        AutocompleteSupportFragment getAutocompleteSupportFragment();
         void loadResult();
-        void callback(Place place);
+        void modelToViewCallback(Place place);
+        void viewToModelCallback(AutocompleteSupportFragment autocompleteSupportFragment);
     }
 
     interface Model {
-        void getResult(AutocompleteSupportFragment autocompleteSupportFragment);
+        void getResult();
+        void setAutocompleteSupportFragment(AutocompleteSupportFragment autocompleteSupportFragment);
     }
 }

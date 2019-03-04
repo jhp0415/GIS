@@ -3,7 +3,6 @@ package com.example.placesapi03.view;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,7 +11,6 @@ import com.example.placesapi03.contract.PlaceAutocompleteContract;
 import com.example.placesapi03.contract.PlacePhotosContract;
 import com.example.placesapi03.presenter.PlaceAutocompletePresenter;
 import com.example.placesapi03.presenter.PlacePhotosPresenter;
-import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -38,17 +36,26 @@ public class PlacePhotosActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_photos);
 
-        init();
+        viewInit();
 
-        presenterPhotos = new PlacePhotosPresenter(this, placesClient);
+        presenterInit();
+        getPlacePhotosResult();
+    }
 
-        presenterAuto = new PlaceAutocompletePresenter(this, autocompleteSupportFragment);
+    public void presenterInit(){
+        presenterPhotos = new PlacePhotosPresenter(this);
+        presenterPhotos.viewToModelCallback(placesClient);
+
+        presenterAuto = new PlaceAutocompletePresenter(this);
+        presenterAuto.viewToModelCallback(autocompleteSupportFragment);
+    }
+
+    public void getPlacePhotosResult(){
         presenterAuto.loadResult();
-
     }
 
     @Override
-    public void init() {
+    public void viewInit() {
         imageView = (ImageView) findViewById(R.id.place_photos_imageview);
         nameTextView = (TextView) findViewById(R.id.photos_name_textview);
         addressTextView = (TextView) findViewById(R.id.photos_address_textview);
@@ -65,7 +72,6 @@ public class PlacePhotosActivity extends AppCompatActivity
         // Create a new Places client instance.
         placesClient = Places.createClient(this);
     }
-
 
     @Override
     public void updateView(Bitmap bitmap, Place place) {

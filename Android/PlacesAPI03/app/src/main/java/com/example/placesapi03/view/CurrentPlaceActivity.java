@@ -10,7 +10,9 @@ import com.example.placesapi03.R;
 import com.example.placesapi03.contract.CurrentPlaceContract;
 import com.example.placesapi03.data.ListItem;
 import com.example.placesapi03.presenter.CurrentPlacePresenter;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.util.ArrayList;
 
@@ -18,7 +20,7 @@ public class CurrentPlaceActivity extends AppCompatActivity implements CurrentPl
     private CurrentPlaceContract.Presenter presenter;
     private String TAG = "DEBUG";
     private TextView textView;
-    private static final int PERMISSIONS_REQUEST_CODE = 100;
+    private PlacesClient placesClient;
 
     ListView listView;
     ListViewAdapter listViewAdapter;
@@ -29,20 +31,33 @@ public class CurrentPlaceActivity extends AppCompatActivity implements CurrentPl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_place);
 
-        init();
-        presenter = new CurrentPlacePresenter(this, getApplicationContext());
-        presenter.loadResult();
+        viewInit();
+        presenterInit();
+        getCurrentPlaceResult();
+    }
 
+    public void presenterInit(){
+        presenter = new CurrentPlacePresenter(this);
+        presenter.viewToModelCallback(placesClient, getApplicationContext());
+    }
+
+    public void getCurrentPlaceResult(){
+        presenter.loadResult();
     }
 
     @Override
-    public void init() {
+    public void viewInit() {
         textView = (TextView) findViewById(R.id.current_place_textview);
-
         listView = (ListView) findViewById(R.id.current_place_listview);
+
         arrayList = new ArrayList<ListItem>();
         listViewAdapter = new ListViewAdapter(CurrentPlaceActivity.this, arrayList);
         listView.setAdapter(listViewAdapter);
+
+        // Initialize Places.
+        Places.initialize(this, "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
+        // Create a new Places client instance.
+        placesClient = Places.createClient(this);
     }
 
     @Override
@@ -50,12 +65,9 @@ public class CurrentPlaceActivity extends AppCompatActivity implements CurrentPl
         textView.setText(result.get(0).getPlace().getName() + ", " + result.get(0).getLikelihood() + "\n" +
                 result.get(0).getPlace().getAddress() + result.get(0).getPlace().getLatLng().latitude + result.get(0).getPlace().getLatLng().longitude);
 
-        for(PlaceLikelihood temp : result){
+        for (PlaceLikelihood temp : result) {
             arrayList.add(new ListItem(temp.getPlace().getName(), temp.getPlace().getAddress() +
                     temp.getPlace().getLatLng().latitude + temp.getPlace().getLatLng().longitude + temp.getLikelihood()));
         }
-
     }
-
-
 }

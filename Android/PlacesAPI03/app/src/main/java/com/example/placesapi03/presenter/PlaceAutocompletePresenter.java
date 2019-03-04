@@ -18,23 +18,35 @@ public class PlaceAutocompletePresenter implements PlaceAutocompleteContract.Pre
     private AutocompleteSupportFragment autocompleteSupportFragment;
     private String TAG = "DEBUG";
 
-    private Place place;
-    private Status status = Status.RESULT_TIMEOUT;
 
-    public PlaceAutocompletePresenter(PlaceAutocompleteContract.View view, AutocompleteSupportFragment autocompleteSupportFragment){
+    public PlaceAutocompletePresenter(PlaceAutocompleteContract.View view){
         this.view = view;
-        this.autocompleteSupportFragment = autocompleteSupportFragment;
         model = new PlaceAutocompleteModel(this);
     }
 
     @Override
-    public void loadResult() {
-        model.getResult(this.autocompleteSupportFragment);
+    public void setAutocompleteSupportFragment(AutocompleteSupportFragment autocompleteSupportFragment) {
+        this.autocompleteSupportFragment = autocompleteSupportFragment;
     }
 
     @Override
-    public void callback(Place place) {
+    public AutocompleteSupportFragment getAutocompleteSupportFragment() {
+        return autocompleteSupportFragment;
+    }
+
+    @Override
+    public void loadResult() {
+        model.getResult();
+    }
+
+    @Override
+    public void modelToViewCallback(Place place) {
         view.updateView(place);
         view.getPlaceResult(place);
+    }
+
+    @Override
+    public void viewToModelCallback(AutocompleteSupportFragment autocompleteSupportFragment) {
+        model.setAutocompleteSupportFragment(autocompleteSupportFragment);
     }
 }

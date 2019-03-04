@@ -16,6 +16,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 public class PlaceAutocompleteActivity extends AppCompatActivity implements PlaceAutocompleteContract.View {
     private PlaceAutocompleteContract.Presenter presenter;
     private AutocompleteSupportFragment autocompleteSupportFragment;
+    private PlacesClient placesClient;
     private TextView textView;
     private String TAG = "DEBUG";
 
@@ -24,14 +25,23 @@ public class PlaceAutocompleteActivity extends AppCompatActivity implements Plac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_autocomplete);
 
-        init();
+        viewInit();
+        presenterInit();
+        getPlaceAutocompleteResult();
+    }
 
-        presenter = new PlaceAutocompletePresenter(this, autocompleteSupportFragment);
+    public void presenterInit(){
+        presenter = new PlaceAutocompletePresenter(this);
+        //presenter.setAutocompleteSupportFragment(autocompleteSupportFragment);
+        presenter.viewToModelCallback(autocompleteSupportFragment);
+    }
+
+    public void getPlaceAutocompleteResult() {
         presenter.loadResult();
     }
 
     @Override
-    public void init() {
+    public void viewInit() {
         textView = (TextView) findViewById(R.id.place_autocomplete_result_textview);
 
         // Setup Autocomplete Support Fragment
@@ -39,11 +49,10 @@ public class PlaceAutocompleteActivity extends AppCompatActivity implements Plac
                 (AutocompleteSupportFragment)
                         getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-
         // Initialize Places.
         Places.initialize(getApplicationContext(), "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
         // Create a new Places client instance.
-        PlacesClient placesClient = Places.createClient(this);
+        placesClient = Places.createClient(this);
     }
 
     @Override

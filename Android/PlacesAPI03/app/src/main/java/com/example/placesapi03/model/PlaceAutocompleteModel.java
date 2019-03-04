@@ -11,21 +11,24 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import java.util.Arrays;
 import java.util.List;
 
-import static com.google.android.gms.common.api.Status.RESULT_SUCCESS;
-
 public class PlaceAutocompleteModel implements PlaceAutocompleteContract.Model {
     private PlaceAutocompleteContract.Presenter presenter;
+    private AutocompleteSupportFragment autocompleteSupportFragment;
     private String TAG = "DEBUG";
 
     public PlaceAutocompleteModel(PlaceAutocompleteContract.Presenter presenter){
         this.presenter = presenter;
-
     }
 
     @Override
-    public void getResult(AutocompleteSupportFragment autocompleteSupportFragment) {
+    public void setAutocompleteSupportFragment(AutocompleteSupportFragment autocompleteSupportFragment) {
+        this.autocompleteSupportFragment = autocompleteSupportFragment;
+    }
+
+    @Override
+    public void getResult() {
         // 자동 완성 예제
-        List<Place.Field> arrays;arrays = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ID, Place.Field.LAT_LNG);
+        List<Place.Field> arrays = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ID, Place.Field.LAT_LNG);
 
         // Setup Autocomplete Support Fragment
         autocompleteSupportFragment.setPlaceFields(arrays);
@@ -35,18 +38,12 @@ public class PlaceAutocompleteModel implements PlaceAutocompleteContract.Model {
                     public void onPlaceSelected(Place place) {
                         Log.d(TAG, "Autocomplete getResult() : " + place.getName() + ", " + place.getAddress() + ", " + place.getId());
                         //결과 반영
-
-                        presenter.callback(place);
+                        presenter.modelToViewCallback(place);
                     }
-
                     @Override
                     public void onError(Status status) {
                         Log.d(TAG, "An error occurred: " + status);
-
-                        //결과 반영
-                        //presenter.callback(null);
                     }
                 });
-
     }
 }

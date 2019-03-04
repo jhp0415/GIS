@@ -6,32 +6,38 @@ import android.util.Log;
 import com.example.placesapi03.contract.CurrentPlaceContract;
 import com.example.placesapi03.model.CurrentPlaceModel;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.util.ArrayList;
 
 public class CurrentPlacePresenter implements CurrentPlaceContract.Presenter {
     private CurrentPlaceContract.View view;
     private CurrentPlaceContract.Model model;
-    private Context context;
     private String TAG = "DEBUG";
+    private PlacesClient placesClient;
+    private Context context;
 
-    public CurrentPlacePresenter(CurrentPlaceContract.View view, Context context){
+    public CurrentPlacePresenter(CurrentPlaceContract.View view){
         this.view = view;
-        this.context = context;
-        model = new CurrentPlaceModel(this, this.context);
+        model = new CurrentPlaceModel(this);
     }
 
     // View -> Presenter -> Model 호출
     // Model에서 현재 위치 받아오는 함수 실행
     @Override
     public void loadResult() {
-        Log.d(TAG, "presenter : loadResult 실행");
         model.getResult();
     }
 
+
     // Model -> View로 데이터 업데이트
     @Override
-    public void callback(ArrayList<PlaceLikelihood> arrayList) {
+    public void modelToViewCallback(ArrayList<PlaceLikelihood> arrayList) {
         view.updateView(arrayList);
+    }
+
+    @Override
+    public void viewToModelCallback(PlacesClient placesClient, Context context) {
+        model.setParameter(placesClient, context);
     }
 }
