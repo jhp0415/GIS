@@ -7,6 +7,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.placesapi03.Adapter.ListViewAdapter;
+import com.example.placesapi03.MyEventListener;
 import com.example.placesapi03.R;
 import com.example.placesapi03.contract.CurrentPlaceContract;
 import com.example.placesapi03.data.ListItem;
@@ -21,7 +22,6 @@ public class CurrentPlaceActivity extends AppCompatActivity implements CurrentPl
     private CurrentPlaceContract.Presenter presenter;
     private String TAG = "DEBUG";
     private TextView textView;
-    private PlacesClient placesClient;
 
     ListView listView;
     ListViewAdapter listViewAdapter;
@@ -35,6 +35,7 @@ public class CurrentPlaceActivity extends AppCompatActivity implements CurrentPl
         viewInit();
         presenterInit();
     }
+
 
     public void presenterInit(){
         presenter = new CurrentPlacePresenter(this,

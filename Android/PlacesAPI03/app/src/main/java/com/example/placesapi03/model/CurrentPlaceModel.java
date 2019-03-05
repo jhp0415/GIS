@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.placesapi03.MyEventListener;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -20,7 +21,7 @@ import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class CurrentPlaceModel {
+public class CurrentPlaceModel{
     private String TAG = "DEBUG";
     private ArrayList<PlaceLikelihood> arrayList;
     private PlacesClient placesClient;
@@ -38,7 +39,7 @@ public class CurrentPlaceModel {
 
     }
 
-    public ArrayList<PlaceLikelihood> getResult() {
+    public void getResult(MyEventListener myEventListener) {
         Log.d(TAG, "Model : getResult() 실행");
         // Use fields to define the data types to return.
         List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ID, Place.Field.LAT_LNG);
@@ -60,6 +61,9 @@ public class CurrentPlaceModel {
                                 placeLikelihood.getLikelihood()));
                         arrayList.add(placeLikelihood);
                     }
+                    if (arrayList.size() != 0){
+                        myEventListener.onRecivedEvent(arrayList);
+                    }
                 } else {
                     Exception exception = task.getException();
                     if (exception instanceof ApiException) {
@@ -69,7 +73,6 @@ public class CurrentPlaceModel {
                 }
             });
         }
-        return arrayList;
-    }
 
+    }
 }

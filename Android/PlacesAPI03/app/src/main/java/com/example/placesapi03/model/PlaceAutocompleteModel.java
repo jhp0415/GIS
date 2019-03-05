@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.placesapi03.MyEventListener;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -31,10 +32,9 @@ public class PlaceAutocompleteModel {
         Places.initialize(this.context, "AIzaSyDSAwlWaFJ2s9hOYzNCNcItMqFt_-NNB8I");
         // Create a new Places client instance.
         placesClient = Places.createClient(this.context);
-        Log.d(TAG, "PlaceAutocompleteModel : 생성자 실행");
     }
 
-    public Place getResult() {
+    public void getResult(MyEventListener myEventListener) {
         Log.d(TAG, "PlaceAutocompleteModel : getResult() 실행");
         Log.d(TAG, autocompleteSupportFragment.toString());
         // 자동 완성 예제
@@ -47,13 +47,12 @@ public class PlaceAutocompleteModel {
                     @Override
                     public void onPlaceSelected(Place place) {
                         Log.d(TAG, "Autocomplete getResult() : " + place.getName() + ", " + place.getAddress() + ", " + place.getId());
-                        result = place;
+                        myEventListener.onRecivedEvent(place);
                     }
                     @Override
                     public void onError(Status status) {
                         Log.d(TAG, "An error occurred: " + status);
                     }
                 });
-        return result;
     }
 }

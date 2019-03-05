@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.example.placesapi03.MyEventListener;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
@@ -20,6 +21,8 @@ public class PlacePhotosModel {
     private PlacesClient placesClient;
     private Bitmap bitmap;
     private String TAG = "DEBUG";
+    private String placeId;
+    private Place mplace;
 
     public PlacePhotosModel(Context context){
         this.context = context;
@@ -30,10 +33,12 @@ public class PlacePhotosModel {
         placesClient = Places.createClient(this.context);
     }
 
-    public Bitmap getResult(Place mplace) {
-        // 장소의 ID 입력하기
-        String placeId = mplace.getId().toString();
+    public void setPlaceId(Place place) {
+        this.placeId = place.getId();
+        this.mplace = place;
+    }
 
+    public void getResult(MyEventListener myEventListener) {
         // Specify fields. Requests for photos must always have the PHOTO_METADATAS field.
         List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
 
@@ -56,6 +61,9 @@ public class PlacePhotosModel {
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
                 bitmap = fetchPhotoResponse.getBitmap();
 
+                myEventListener.onRecivedEvent(mplace, bitmap);
+
+
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     ApiException apiException = (ApiException) exception;
@@ -65,6 +73,5 @@ public class PlacePhotosModel {
                 }
             });
         });
-        return bitmap;
     }
 }

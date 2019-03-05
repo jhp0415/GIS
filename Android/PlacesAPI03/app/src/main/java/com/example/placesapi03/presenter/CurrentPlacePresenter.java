@@ -1,9 +1,13 @@
 package com.example.placesapi03.presenter;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.example.placesapi03.MyEventListener;
 import com.example.placesapi03.contract.CurrentPlaceContract;
 import com.example.placesapi03.model.CurrentPlaceModel;
+import com.example.placesapi03.model.PlacePhotosModel;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
 
 import java.util.ArrayList;
@@ -16,7 +20,6 @@ public class CurrentPlacePresenter implements CurrentPlaceContract.Presenter {
     public CurrentPlacePresenter(CurrentPlaceContract.View view, CurrentPlaceModel model){
         this.view = view;
         this.model = model;
-
         this.view.setPresenter(this);
     }
 
@@ -27,16 +30,35 @@ public class CurrentPlacePresenter implements CurrentPlaceContract.Presenter {
 
     @Override
     public void loadResult() {
-        callback(model.getResult());
+        model.getResult(new MyEventListener() {
+            @Override
+            public void onRecivedEvent(ArrayList<PlaceLikelihood> arrayList) {
+                callback(arrayList);
+            }
+
+            @Override
+            public void onRecivedEvent(Place place) {
+
+            }
+
+            @Override
+            public void onRecivedEvent(Place place, Bitmap bitmap) {
+
+            }
+        });
     }
 
     @Override
     public void callback(ArrayList<PlaceLikelihood> arrayList) {
-        if (arrayList.size() != 0) {
-            Log.d(TAG, "presenter : callback() 실행");
-            view.updateView(arrayList);
-        } else {
-            Log.d(TAG, "ArrayList<PlaceLikelihood is null...");
-        }
+        view.updateView(arrayList);
     }
+
+
+
+
+
+
+
+
+
 }

@@ -86,7 +86,7 @@ public class PlacePhotosActivity extends AppCompatActivity
     }
 
     @Override
-    public void updateView(Bitmap bitmap, Place place) {
+    public void updateView(Place place, Bitmap bitmap) {
         imageView.setImageBitmap(bitmap);
         nameTextView.setText(place.getName());
         addressTextView.setText(place.getAddress());
