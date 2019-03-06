@@ -43,6 +43,7 @@ public class RetrofitClient {
 
                 gisApiRepo = response.body();
                 Log.d(TAG, gisApiRepo.toString());
+                //리스너에게 알리기
             }
 
             @Override
@@ -52,6 +53,9 @@ public class RetrofitClient {
         });
         return gisApiRepo;
     }
+
+
+
 
     public static GISApiRepo getPOISearch(Map map) {
         gisApiService.poiSearch(map).enqueue(new Callback<GISApiRepo>() {
