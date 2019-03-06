@@ -7,15 +7,21 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 
 public class GlobalApplication extends Application {
 
-    private static PlacesClient placesClient;
+    public static PlacesClient placesClient;
     public static GlobalApplication obj;
 
     @Override
     public void onCreate() {
         super.onCreate();
         obj = this;
+
         Places.initialize(this, GlobalApplication.getApiKey());
         placesClient = Places.createClient(this);
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
     }
 
     public static PlacesClient getPlacesClient(){
@@ -29,4 +35,5 @@ public class GlobalApplication extends Application {
     public static GlobalApplication getGlobalApplicationContext(){
         return obj;
     }
+
 }

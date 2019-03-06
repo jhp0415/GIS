@@ -6,17 +6,14 @@ import java.util.ArrayList;
 
 public interface CurrentPlaceContract {
     interface View {
-        void init();
+        void viewInit();
         void updateView(ArrayList<PlaceLikelihood> arrayList);
+        void setPresenter(CurrentPlaceContract.Presenter presenter);
     }
 
     interface Presenter {
+        void start();
         void loadResult();
         void callback(ArrayList<PlaceLikelihood> arrayList);
     }
-
-    interface Model {
-        void getResult();
-    }
-
 }

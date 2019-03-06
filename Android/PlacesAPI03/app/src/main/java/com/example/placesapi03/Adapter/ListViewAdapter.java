@@ -10,14 +10,13 @@ import android.widget.TextView;
 import com.example.placesapi03.R;
 import com.example.placesapi03.data.ListItem;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListViewAdapter extends BaseAdapter {
     Context context;
     ArrayList<ListItem> arrayList;
-
+    List<ListItem> items;
     TextView title;
     TextView description;
 
