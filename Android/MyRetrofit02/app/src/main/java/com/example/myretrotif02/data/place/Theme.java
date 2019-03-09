@@ -5,7 +5,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Theme {
-
     @SerializedName("code")
     @Expose
     private String code;
@@ -13,18 +12,9 @@ public class Theme {
     @Expose
     private String name;
 
-    /**
-     * No args constructor for use in serialization
-     * 
-     */
     public Theme() {
     }
 
-    /**
-     * 
-     * @param name
-     * @param code
-     */
     public Theme(String code, String name) {
         super();
         this.code = code;

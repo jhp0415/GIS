@@ -1,14 +1,10 @@
 package com.example.myretrotif02.view;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.example.myretrotif02.R;
-import com.example.myretrotif02.data.place.ResponseBody;
-import com.example.myretrotif02.retrofit.GISApiCallback;
-import com.example.myretrotif02.retrofit.GISApiClient;
 
 public class RetrievePOIActivity extends AppCompatActivity {
     private TextView textView1;
@@ -25,26 +21,26 @@ public class RetrievePOIActivity extends AppCompatActivity {
     }
 
     public void gisRetrievePOI(String searchID) {
-        GISApiClient.getInstance().getRetrievePOI(searchID, new GISApiCallback() {
-            @Override
-            public void onSuccess(int code, Object receivedData) {
-                ResponseBody repo = (ResponseBody) receivedData;
-                textView1.setText(repo.getPois().get(0).getAddress().getSiDo() + " "
-                        + repo.getPois().get(0).getAddress().getStreet() + " "
-                        + repo.getPois().get(0).getAddress().getStreetNumber() + " "
-                        + repo.getPois().get(0).getName());
-            }
-
-            @Override
-            public void onFailure(int code) {
-                Log.d(TAG, "Error Code : " + code);
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                Log.d(TAG, t.toString());
-            }
-        });
+//        GISApiClient.getInstance().getRetrievePOI(searchID, new GISApiCallback() {
+//            @Override
+//            public void onSuccess(int code, Object receivedData) {
+//                ResponseBody repo = (ResponseBody) receivedData;
+//                textView1.setText(repo.getPois().get(0).getAddress().getSiDo() + " "
+//                        + repo.getPois().get(0).getAddress().getStreet() + " "
+//                        + repo.getPois().get(0).getAddress().getStreetNumber() + " "
+//                        + repo.getPois().get(0).getName());
+//            }
+//
+//            @Override
+//            public void onFailure(int code) {
+//                Log.d(TAG, "Error Code : " + code);
+//            }
+//
+//            @Override
+//            public void onError(Throwable t) {
+//                Log.d(TAG, t.toString());
+//            }
+//        });
     }
 
 }

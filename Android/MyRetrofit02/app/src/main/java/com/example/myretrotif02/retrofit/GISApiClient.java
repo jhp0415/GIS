@@ -2,8 +2,7 @@ package com.example.myretrotif02.retrofit;
 
 import android.util.Log;
 
-
-import com.example.myretrotif02.data.place.ResponseBody;
+import com.example.myretrotif02.data.place.Place;
 
 import java.util.HashMap;
 
@@ -41,31 +40,52 @@ public class GISApiClient {
         return retrofit.create(GISApiService.class);
     }
 
-    public static void getRetrievePOI(String id, final GISApiCallback gisApiCallback) {
-        getGisApiService().retrievePOI(id).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    gisApiCallback.onSuccess(response.code(), response.body());
+//    public static void getRetrievePOI(String id, final GISApiCallback gisApiCallback) {
+//        getGisApiService().retrievePOI(id).enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                if (response.isSuccessful()) {
+//                    gisApiCallback.onSuccess(response.code(), response.body());
+//
+//                } else {
+//                    Log.d(TAG, "getRetrievePOI : response.isSuccessful() error...");
+//                    gisApiCallback.onFailure(response.code());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Log.d(TAG, "onFailure().....");
+//                gisApiCallback.onError(t);
+//            }
+//        });
+//    }
 
-                } else {
-                    Log.d(TAG, "getRetrievePOI : response.isSuccessful() error...");
-                    gisApiCallback.onFailure(response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d(TAG, "onFailure().....");
-                gisApiCallback.onError(t);
-            }
-        });
-    }
+//    public static void getPOISearch(HashMap<String, String> parameters, final GISApiCallback gisApiCallback) {
+//        getGisApiService().poiSearch(parameters).enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                if (response.isSuccessful()) {
+//                    gisApiCallback.onSuccess(response.code(), response.body());
+//
+//                } else {
+//                    Log.d(TAG, "getPOISearch() : response.isSuccessful() error...");
+//                    gisApiCallback.onFailure(response.code());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Log.d(TAG, "getPOISearch() : onFailure().....");
+//                gisApiCallback.onError(t);
+//            }
+//        });
+//    }
 
     public static void getPOISearch(HashMap<String, String> parameters, final GISApiCallback gisApiCallback) {
-        getGisApiService().poiSearch(parameters).enqueue(new Callback<ResponseBody>() {
+        getGisApiService().poiSearch(parameters).enqueue(new Callback<Place>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<Place> call, Response<Place> response) {
                 if (response.isSuccessful()) {
                     gisApiCallback.onSuccess(response.code(), response.body());
 
@@ -76,7 +96,7 @@ public class GISApiClient {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<Place> call, Throwable t) {
                 Log.d(TAG, "getPOISearch() : onFailure().....");
                 gisApiCallback.onError(t);
             }

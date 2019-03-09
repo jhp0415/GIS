@@ -5,7 +5,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Address {
-
     @SerializedName("siDo")
     @Expose
     private String siDo;
@@ -31,24 +30,9 @@ public class Address {
     @Expose
     private String streetNumber;
 
-    /**
-     * No args constructor for use in serialization
-     * 
-     */
     public Address() {
     }
 
-    /**
-     * 
-     * @param eupMyeonDong
-     * @param street
-     * @param siDo
-     * @param ri
-     * @param streetNumber
-     * @param houseNumber
-     * @param haengJeongDong
-     * @param siGunGu
-     */
     public Address(String siDo, String siGunGu, String eupMyeonDong, String haengJeongDong, String ri, String houseNumber, String street, String streetNumber) {
         super();
         this.siDo = siDo;

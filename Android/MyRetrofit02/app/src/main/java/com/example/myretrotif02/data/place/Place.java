@@ -1,45 +1,97 @@
 
 package com.example.myretrotif02.data.place;
 
-import com.example.myretrotif02.data.response.ResponseBody;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 
 public class Place {
-    private ResponseBody responseBody;
+    @SerializedName("numberOfPois")
+    @Expose
+    private int numberOfPois;
+    @SerializedName("pois")
+    @Expose
+    private List<Poi> pois = null;
 
-    public Place(ResponseBody responseBody) {
-        this.responseBody = responseBody;
+    public Place() {
+    }
+
+    public Place(int numberOfPois, List<Poi> pois) {
+        super();
+        this.numberOfPois = numberOfPois;
+        this.pois = pois;
+    }
+
+    public int getNumberOfPois() {
+        return numberOfPois;
+    }
+
+    public void setNumberOfPois(int numberOfPois) {
+        this.numberOfPois = numberOfPois;
+    }
+
+    public List<Poi> getPois() {
+        return pois;
+    }
+
+    public void setPois(List<Poi> pois) {
+        this.pois = pois;
     }
 
     public String getName() {
-        if (responseBody.getPois().get(0).getName() != null) {
-            return responseBody.getPois().get(0).getName();
-        } else {
-            return "";
-        }
+        return getPois().get(0).getName();
     }
 
     public String getId() {
-        if (responseBody.getPois().get(0).getId() != null) {
-            return responseBody.getPois().get(0).getId();
-        } else {
-            return "";
-        }
-
+        return getPois().get(0).getId();
     }
 
     public String getAddressParcel() {
-        if (responseBody.getPois().get(0).getAddress().getHaengJeongDong() != null) {
-            return responseBody.getPois().get(0).getAddress().getSiDo()
-                    + responseBody.getPois().get(0).getAddress().getSiGunGu()
-                    + responseBody.getPois().get(0).getAddress().getHaengJeongDong()
-                    + responseBody.getPois().get(0).getAddress().getHouseNumber();
-        } else {
-
-        }
+        return getPois().get(0).getAddress().getSiDo() + " "
+                + getPois().get(0).getAddress().getSiGunGu() + " "
+                + getPois().get(0).getAddress().getEupMyeonDong() + " "
+                + getPois().get(0).getAddress().getHouseNumber();
     }
 
+    public String getAddressRoad() {
+        return getPois().get(0).getAddress().getSiDo() + " "
+                + getPois().get(0).getAddress().getStreet() + " "
+                + getPois().get(0).getAddress().getStreetNumber() + " "
+                + getPois().get(0).getAddress().getStreetNumber();
+    }
+
+    public Double getLat() {
+        return getPois().get(0).getPoint().getLat();
+    }
+
+    public Double getLng() {
+        return getPois().get(0).getPoint().getLng();
+    }
+
+    public Double getDistance() {
+        return getPois().get(0).getDistance();
+    }
+
+    public String getPhones() {
+        return getPois().get(0).getPhones().getRepresentation().get(0);
+    }
+
+    public String getTheme() {
+        return getPois().get(0).getTheme().get(0).getCode() + ", " + getPois().get(0).getTheme().get(0).getName();
+    }
+
+    public String getPhotoURL() {
+        return getPois().get(0).getExtension().getPhotoURL();
+    }
+
+    public String getHomepageURL() {
+        return getPois().get(0).getExtension().getHomepageURL();
+    }
+
+    public String getOpeningHours() {
+        return getPois().get(0).getExtension().getOpeningHours().get(0);
+    }
 
 }

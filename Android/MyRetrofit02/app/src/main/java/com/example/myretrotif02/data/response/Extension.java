@@ -179,5 +179,4 @@ public class Extension {
     public void setDisabledService(Boolean disabledService) {
         this.disabledService = disabledService;
     }
-
 }

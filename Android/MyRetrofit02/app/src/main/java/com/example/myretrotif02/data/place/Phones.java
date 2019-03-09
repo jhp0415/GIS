@@ -1,30 +1,30 @@
 
 package com.example.myretrotif02.data.place;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Phones {
+import java.util.List;
 
+public class Phones {
     @SerializedName("representation")
     @Expose
     private List<String> representation = null;
+    @SerializedName("fax")
+    @Expose
+    private List<String> fax = null;
+    @SerializedName("normal")
+    @Expose
+    private List<String> normal = null;
 
-    /**
-     * No args constructor for use in serialization
-     * 
-     */
     public Phones() {
     }
 
-    /**
-     * 
-     * @param representation
-     */
-    public Phones(List<String> representation) {
+    public Phones(List<String> representation, List<String> fax, List<String> normal) {
         super();
         this.representation = representation;
+        this.fax = fax;
+        this.normal = normal;
     }
 
     public List<String> getRepresentation() {
@@ -33,6 +33,22 @@ public class Phones {
 
     public void setRepresentation(List<String> representation) {
         this.representation = representation;
+    }
+
+    public List<String> getFax() {
+        return fax;
+    }
+
+    public void setFax(List<String> fax) {
+        this.fax = fax;
+    }
+
+    public List<String> getNormal() {
+        return normal;
+    }
+
+    public void setNormal(List<String> normal) {
+        this.normal = normal;
     }
 
 }

@@ -23,10 +23,10 @@ public class POISearchModel {
         GISApiClient.getInstance().getPOISearch(parameter, new GISApiCallback() {
             @Override
             public void onSuccess(int code, Object receivedData) {
-                ResponseBody repo = (ResponseBody) receivedData;
+                Place place = (Place) receivedData;
 
                 // 데이터 가공 : PoiSearchRepo -> ResponseBody 모델링
-                Place place = ConvertResponseToPlace(repo);
+                //Place place = ConvertResponseToPlace(repo);
 
                 // presenter에 전달
                 callbackListener.onReceived(place);

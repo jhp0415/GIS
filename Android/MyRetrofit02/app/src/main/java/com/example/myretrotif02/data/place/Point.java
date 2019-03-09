@@ -13,18 +13,9 @@ public class Point {
     @Expose
     private Double lng;
 
-    /**
-     * No args constructor for use in serialization
-     * 
-     */
     public Point() {
     }
 
-    /**
-     * 
-     * @param lng
-     * @param lat
-     */
     public Point(Double lat, Double lng) {
         super();
         this.lat = lat;
