@@ -78,17 +78,6 @@ public class POISearchActivity extends AppCompatActivity
 
     @Override
     public void updateView(Place place) {
-//        tv_id.setText(place.getPois().get(0).getId());
-//
-//        tv_name.setText(place.getPois().get(0).getName());
-//
-//        tv_address.setText(place.getPois().get(0).getAddress().getSiDo() + " "
-//                + place.getPois().get(0).getAddress().getStreet() + " "
-//                + place.getPois().get(0).getAddress().getStreetNumber() + " "
-//                + place.getPois().get(0).getName());
-//
-//        tv_point.setText(place.getPois().get(0).getPoint().getLat().toString() + ", " + place.getPois().get(0).getPoint().getLng().toString());
-
         for(int index = 0; index < place.getNumberOfPois() % 10; index++) {
             Log.d(TAG, String.valueOf(place.getNumberOfPois()));
             Log.d(TAG, place.getId());
@@ -124,6 +113,8 @@ public class POISearchActivity extends AppCompatActivity
 //                Log.d(TAG, "");
 //                tv_theme.setText("");
 //            }
+
+
         }
     }
 
