@@ -13,11 +13,18 @@ import com.example.myretrotif02.construct.POISearchConstruct;
 import com.example.myretrotif02.data.place.Place;
 import com.example.myretrotif02.model.POISearchModel;
 import com.example.myretrotif02.presenter.POISearchPresenter;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class POISearchActivity extends AppCompatActivity
-        implements POISearchConstruct.View {
+        implements POISearchConstruct.View, OnMapReadyCallback {
 
     private POISearchConstruct.Presenter presenter;
+    private GoogleMap mMap;
     private EditText editText;
     private TextView tv_id;
     private TextView tv_name;
@@ -49,6 +56,11 @@ public class POISearchActivity extends AppCompatActivity
 
     @Override
     public void viewInit() {
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         tv_id = (TextView) findViewById(R.id.tv_id_value);
         tv_name = (TextView) findViewById(R.id.tv_name_value);
         tv_address_parcel = (TextView) findViewById(R.id.tv_address_parcel_value);
@@ -113,7 +125,9 @@ public class POISearchActivity extends AppCompatActivity
 //                Log.d(TAG, "");
 //                tv_theme.setText("");
 //            }
-
+            LatLng searchPosition = new LatLng(place.getLat(), place.getLng());
+            mMap.addMarker(new MarkerOptions().position(searchPosition).title(place.getName()));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(searchPosition));
 
         }
     }
@@ -123,4 +137,13 @@ public class POISearchActivity extends AppCompatActivity
         this.presenter = presenter;
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
 }
