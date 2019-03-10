@@ -4,8 +4,6 @@ package com.example.myretrotif02.data.place;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 public class Extension {
     @SerializedName("homepageURL")
     @Expose
@@ -13,20 +11,26 @@ public class Extension {
     @SerializedName("photoURL")
     @Expose
     private String photoURL;
-    @SerializedName("openingHours")
-    @Expose
-    private List<String> openingHours;
+//    @SerializedName("openingHours")
+//    @Expose
+//    private List<OpeningHours> openingHours;
 
 
     public Extension() {
     }
 
-    public Extension(String homepageURL, String photoURL, List<String> openingHours) {
+    public Extension(String homepageURL, String photoURL) {
         super();
         this.homepageURL = homepageURL;
         this.photoURL = photoURL;
-        this.openingHours = openingHours;
     }
+
+//    public Extension(String homepageURL, String photoURL, List<OpeningHours> openingHours) {
+//        super();
+//        this.homepageURL = homepageURL;
+//        this.photoURL = photoURL;
+//        this.openingHours = openingHours;
+//    }
 
     public String getHomepageURL() {
         return homepageURL;
@@ -44,11 +48,11 @@ public class Extension {
         this.photoURL = photoURL;
     }
 
-    public List<String> getOpeningHours() {
-        return openingHours;
-    }
-
-    public void setOpeningHours(List<String> openingHours) {
-        this.openingHours = openingHours;
-    }
+//    public List<OpeningHours> getOpeningHours() {
+//        return openingHours;
+//    }
+//
+//    public void setOpeningHours(List<OpeningHours> openingHours) {
+//        this.openingHours = openingHours;
+//    }
 }

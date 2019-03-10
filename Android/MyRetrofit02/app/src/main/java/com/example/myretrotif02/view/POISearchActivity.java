@@ -96,19 +96,34 @@ public class POISearchActivity extends AppCompatActivity
             Log.d(TAG, place.getName());
             tv_name.setText(place.getName());
             Log.d(TAG, place.getAddressParcel());
-            tv_address_parcel.setText(place.getAddressRoad());
+            tv_address_parcel.setText(place.getAddressParcel());
+            Log.d(TAG, place.getAddressRoad());
+            tv_address_road.setText(place.getAddressRoad());
             Log.d(TAG, place.getLat() + ", " + place.getLng());
             tv_point.setText(place.getLat() + ", " + place.getLng());
             Log.d(TAG, place.getPhones());
             tv_phones.setText(place.getPhones());
-            Log.d(TAG, place.getPhones());
-            tv_theme.setText(place.getTheme());
+
+            if (place.getTheme() != null) {
+                Log.d(TAG, place.getPhones());
+                tv_theme.setText(place.getTheme().getCode());
+            } else {
+                Log.d(TAG, "");
+                tv_theme.setText("");
+            }
+
             Log.d(TAG, place.getPhotoURL());
             tv_photoURL.setText(place.getPhotoURL());
             Log.d(TAG, place.getHomepageURL());
             tv_homepageURL.setText(place.getHomepageURL());
-            Log.d(TAG, place.getOpeningHours());
-            tv_opeingHours.setText(place.getOpeningHours());
+
+//            if (place.getTheme() != null) {
+//                Log.d(TAG, place.getOpeningHours().get0().getStart() + ", " + place.getOpeningHours().get0().getStart());
+//                tv_opeingHours.setText(place.getOpeningHours().get0().getStart() + ", " + place.getOpeningHours().get0().getStart());
+//            } else {
+//                Log.d(TAG, "");
+//                tv_theme.setText("");
+//            }
         }
     }
 

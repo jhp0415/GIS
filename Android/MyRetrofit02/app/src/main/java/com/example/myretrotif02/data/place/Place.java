@@ -1,6 +1,7 @@
 
 package com.example.myretrotif02.data.place;
 
+import com.example.myretrotif02.DataUtil;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -14,6 +15,8 @@ public class Place {
     @SerializedName("pois")
     @Expose
     private List<Poi> pois = null;
+
+    private DataUtil u = new DataUtil();
 
     public Place() {
     }
@@ -40,12 +43,22 @@ public class Place {
         this.pois = pois;
     }
 
+
+
     public String getName() {
-        return getPois().get(0).getName();
+        if (!u.isNull(getPois()))
+            if (!u.isNull(getPois().get(0)))
+                if (!u.isNull(getPois().get(0).getName()))
+                    return getPois().get(0).getName();
+        return "";
     }
 
     public String getId() {
-        return getPois().get(0).getId();
+        if (!u.isNull(getPois()))
+            if (!u.isNull(getPois().get(0)))
+                if (!u.isNull(getPois().get(0).getId()))
+                    return getPois().get(0).getId();
+        return "";
     }
 
     public String getAddressParcel() {
@@ -63,35 +76,76 @@ public class Place {
     }
 
     public Double getLat() {
-        return getPois().get(0).getPoint().getLat();
+        if (!u.isNull(getPois()))
+            if (!u.isNull(getPois().get(0)))
+                if (!u.isNull(getPois().get(0).getPoint()))
+                    if (!u.isNull(getPois().get(0).getPoint().getLat()))
+                    return getPois().get(0).getPoint().getLat();
+        return 0.0;
     }
 
     public Double getLng() {
-        return getPois().get(0).getPoint().getLng();
+        if (!u.isNull(getPois()))
+            if (!u.isNull(getPois().get(0)))
+                if (!u.isNull(getPois().get(0).getPoint()))
+                    if (!u.isNull(getPois().get(0).getPoint().getLng()))
+                        return getPois().get(0).getPoint().getLng();
+        return 0.0;
     }
 
     public Double getDistance() {
-        return getPois().get(0).getDistance();
+        if (!u.isNull(getPois()))
+            if (!u.isNull(getPois().get(0)))
+                if (!u.isNull(getPois().get(0).getDistance()))
+                    return getPois().get(0).getDistance();
+        return 0.0;
     }
 
     public String getPhones() {
-        return getPois().get(0).getPhones().getRepresentation().get(0);
+        if (!u.isNull(getPois()))
+            if (!u.isNull(getPois().get(0)))
+                if (!u.isNull(getPois().get(0).getPhones()))
+                    if (!u.isNull(getPois().get(0).getPhones().getRepresentation()))
+                        if (!u.isNull(getPois().get(0).getPhones().getRepresentation().get(0)))
+                            return getPois().get(0).getPhones().getRepresentation().get(0);
+        return "";
     }
 
-    public String getTheme() {
-        return getPois().get(0).getTheme().get(0).getCode() + ", " + getPois().get(0).getTheme().get(0).getName();
+    public Theme getTheme() {
+        if (!u.isNull(getPois()))
+            if (!u.isNull(getPois().get(0)))
+                if (!u.isNull(getPois().get(0).getTheme()))
+                    if (!u.isNull(getPois().get(0).getTheme().get(0)))
+                        if (!u.isNull(getPois().get(0).getTheme().get(0)))
+                                return getPois().get(0).getTheme().get(0);
+        return null;
     }
 
     public String getPhotoURL() {
-        return getPois().get(0).getExtension().getPhotoURL();
+        if (!u.isNull(getPois()))
+            if (!u.isNull(getPois().get(0)))
+                if (!u.isNull(getPois().get(0).getExtension()))
+                    if (!u.isNull(getPois().get(0).getExtension().getPhotoURL()))
+                        return getPois().get(0).getExtension().getPhotoURL();
+        return "";
     }
 
     public String getHomepageURL() {
-        return getPois().get(0).getExtension().getHomepageURL();
+        if (!u.isNull(getPois()))
+            if (!u.isNull(getPois().get(0)))
+                if (!u.isNull(getPois().get(0).getExtension()))
+                    if (!u.isNull(getPois().get(0).getExtension().getHomepageURL()))
+                        return getPois().get(0).getExtension().getHomepageURL();
+        return "";
     }
 
-    public String getOpeningHours() {
-        return getPois().get(0).getExtension().getOpeningHours().get(0);
-    }
-
+//    public OpeningHours getOpeningHours() {
+//        if (!u.isNull(getPois()))
+//            if (!u.isNull(getPois().get(0)))
+//                if (!u.isNull(getPois().get(0).getExtension()))
+//                    if (!u.isNull(getPois().get(0).getExtension().getOpeningHours()))
+//                        if (!u.isNull(getPois().get(0).getExtension().getOpeningHours().get(0)))
+//                            return getPois().get(0).getExtension().getOpeningHours().get(0);
+//        return null;
+//    }
 }
