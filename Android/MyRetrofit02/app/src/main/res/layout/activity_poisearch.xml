@@ -25,20 +25,26 @@
             android:layout_weight="0.7"
             android:text="검색"/>
     </LinearLayout>
-
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+        <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+            <!--xmlns:map="http://schemas.android.com/apk/res-auto"-->
+            <!--xmlns:tools="http://schemas.android.com/tools"-->
+            <!--android:id="@+id/map"-->
+            <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="500dp"-->
+            <!--tools:context=".CurrentPlaceActivity" />-->
+    <!--</LinearLayout>-->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".CurrentPlaceActivity" />
+        android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -130,23 +136,23 @@
                 android:text=" " />
         </LinearLayout>
         <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1">
-        <TextView
-            android:id="@+id/tv_phones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.7"
-            android:text="Phones" />
-        <TextView
-            android:id="@+id/tv_phones_value"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:text=" " />
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:weightSum="1">
+            <TextView
+                android:id="@+id/tv_phones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.7"
+                android:text="Phones" />
+            <TextView
+                android:id="@+id/tv_phones_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:text=" " />
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -219,9 +225,8 @@
                 android:layout_weight="0.3"
                 android:text=" " />
         </LinearLayout>
+        </LinearLayout>
 
-
-    </LinearLayout>
-
+    </ScrollView>
 
 </LinearLayout>

@@ -57,9 +57,9 @@ public class POISearchActivity extends AppCompatActivity
     @Override
     public void viewInit() {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
 
         tv_id = (TextView) findViewById(R.id.tv_id_value);
         tv_name = (TextView) findViewById(R.id.tv_name_value);
@@ -128,7 +128,7 @@ public class POISearchActivity extends AppCompatActivity
             LatLng searchPosition = new LatLng(place.getLat(), place.getLng());
             mMap.addMarker(new MarkerOptions().position(searchPosition).title(place.getName()));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(searchPosition));
-
+            //.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng, 15));
         }
     }
 

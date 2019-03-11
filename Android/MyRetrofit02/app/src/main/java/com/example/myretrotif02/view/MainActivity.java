@@ -26,13 +26,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        Intent intent;
+        //Intent intent;
         switch (v.getId()){
             case R.id.button1:
-                getApplicationContext().startActivity(new Intent(this, POISearchActivity.class));
+                //getApplicationContext().startActivity(new Intent(this, POISearchActivity.class));
+                Intent intent = new Intent(MainActivity.this,  POISearchActivity.class);
+                startActivity(intent);
                 break;
             case R.id.button2:
-                getApplicationContext().startActivity(new Intent(this, RetrievePOIActivity.class));
+                //getApplicationContext().startActivity(new Intent(this, RetrievePOIActivity.class));
+                Intent intent2 = new Intent(MainActivity.this,  RetrievePOIActivity.class);
+                startActivity(intent2);
                 break;
         }
     }

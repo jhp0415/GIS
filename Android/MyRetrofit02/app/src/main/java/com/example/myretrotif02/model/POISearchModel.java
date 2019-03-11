@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.myretrotif02.CallbackListener;
 import com.example.myretrotif02.construct.POISearchConstruct;
+import com.example.myretrotif02.data.GISPlace.GISPlace;
 import com.example.myretrotif02.data.place.Place;
 import com.example.myretrotif02.data.response.ResponseBody;
 import com.example.myretrotif02.retrofit.GISApiCallback;
@@ -26,10 +27,11 @@ public class POISearchModel {
                 Place place = (Place) receivedData;
 
                 // 데이터 가공 : PoiSearchRepo -> ResponseBody 모델링
-                //Place place = ConvertResponseToPlace(repo);
+                GISPlace gisPlace = new GISPlace();
+                gisPlace.ConvertPlaceData(place);
 
                 // presenter에 전달
-                callbackListener.onReceived(place);
+                callbackListener.onReceived(gisPlace);
             }
 
             @Override

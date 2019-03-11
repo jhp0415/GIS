@@ -43,7 +43,7 @@ public class Place {
         this.pois = pois;
     }
 
-
+////////////////////////////////////////////////////////////////////////////////////////
 
     public String getName() {
         if (!u.isNull(getPois()))
