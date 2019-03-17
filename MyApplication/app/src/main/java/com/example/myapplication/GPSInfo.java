@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,7 +10,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -19,8 +17,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.WindowManager;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 public class GPSInfo extends Service implements LocationListener {
 
@@ -150,6 +146,7 @@ public class GPSInfo extends Service implements LocationListener {
 
     public void onLocationChanged(Location location) {
         // TODO Auto-generated method stub
+
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {

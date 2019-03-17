@@ -1,9 +1,9 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -17,7 +17,6 @@ import com.kt.place.sdk.listener.OnSuccessListener;
 import com.kt.place.sdk.net.PoiRequest;
 import com.kt.place.sdk.net.PoiResponse;
 import com.kt.place.sdk.util.Client;
-import com.kt.place.sdk.util.Manager;
 
 public class SearchActivity extends AppCompatActivity {
     private RecyclerAdapter mAdapter;
@@ -38,8 +37,6 @@ public class SearchActivity extends AppCompatActivity {
 
     private void initView() {
 //        getIntentDate();
-        Manager.initialize(getApplicationContext(),
-                "Bearer eb142d9027f84d51a4a20df8490e44bcf6fc7ef4dea64cae96a7fca282ebd8cc02764651");
         client = new Client();
 
         // Toolbar 초기화
