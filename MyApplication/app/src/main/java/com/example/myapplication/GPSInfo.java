@@ -30,8 +30,8 @@ public class GPSInfo extends Service implements LocationListener {
     Location location;
     double lat; // 위도
     double lon; // 경도
-    // 최소 GPS 정보 업데이트 거리 10미터
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+    // 최소 GPS 정보 업데이트 거리 1미터
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1;
     // 최소 GPS 정보 업데이트 시간 밀리세컨(1분)
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
 
@@ -61,12 +61,14 @@ public class GPSInfo extends Service implements LocationListener {
             // 현재 네트워크 상태 값 알아오기
             isNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // GPS 와 네트워크사용이 가능하지 않을때 소스 구현
 
             } else {
                 this.isGetLocation = true;
                 // 네트워크 정보로 부터 위치값 가져오기
+
                 if (isNetworkEnabled) {
                     locationManager.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER,
@@ -79,7 +81,7 @@ public class GPSInfo extends Service implements LocationListener {
                             // 위도 경도 저장
                             lat = location.getLatitude();
                             lon = location.getLongitude();
-                            Log.v("알림", "위도 : " + lat + "경도 " + lon);
+                            Log.d("ddd", "위도 : " + lat + "경도 " + lon);
                         }
                     }
                 }
@@ -144,19 +146,20 @@ public class GPSInfo extends Service implements LocationListener {
         return null;
     }
 
+
+    @Override
     public void onLocationChanged(Location location) {
         // TODO Auto-generated method stub
-
     }
-
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
     }
-
+    @Override
     public void onProviderEnabled(String provider) {
         // TODO Auto-generated method stub
     }
-
+    @Override
     public void onProviderDisabled(String provider) {
         // TODO Auto-generated method stub
     }

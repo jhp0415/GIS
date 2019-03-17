@@ -33,13 +33,10 @@ import com.kt.place.sdk.util.Manager;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationChangeListener,
-        LocationListener,
-        GoogleMap.OnMapClickListener {
+        LocationListener {
 
     private Toolbar myToolbar;
     private GoogleMap mGoogleMap = null;
-    private Location currentLocation = null;
     private Location mLastKnownLocation = null;
     private LatLng currentPoint = null;
     private LatLng defaultPoint = new LatLng(37.57248123626738, 126.97783713788459);        //kT광화문west
@@ -54,19 +51,25 @@ public class MainActivity extends AppCompatActivity
     private boolean isAccessCoarseLocation = false;
     private boolean mLocationPermissionGranted = false;
     private static final int PERMISSION_REQUEST_CODE = 1;
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1;       // 최소 GPS 정보 업데이트 거리 10미터
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;       // 최소 GPS 정보 업데이트 시간 밀리세컨(1분)
-    private int ZOOM_LEVEL = 15;
+    private int ZOOM_LEVEL = 13;
 
     private Client client;
     private final String TAG = "ddd";
-    protected LocationManager locationManager;
+    private GPSInfo gps;
+    private LocationManager locationManager;
+    // 현재 GPS 사용유무
+    boolean isGPSEnabled = false;
+    // 네트워크 사용유무
+    boolean isNetworkEnabled = false;
+    // 최소 GPS 정보 업데이트 거리 1미터
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1;
+    // 최소 GPS 정보 업데이트 시간 밀리세컨(1분)
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initView();
     }
 
@@ -92,14 +95,12 @@ public class MainActivity extends AppCompatActivity
         Manager.initialize(getApplicationContext(),
                 "Bearer eb142d9027f84d51a4a20df8490e44bcf6fc7ef4dea64cae96a7fca282ebd8cc02764651");
         client = new Client();
-
+        gps = new GPSInfo(getApplicationContext());
         locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-//        // GPS 정보 가져오기
-//        isGPSEnabled = locationManager
-//                .isProviderEnabled(LocationManager.GPS_PROVIDER);
-//        // 현재 네트워크 상태 값 알아오기
-//        isNetworkEnabled = locationManager
-//                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        // GPS 정보 가져오기
+        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        // 현재 네트워크 상태 값 알아오기
+        isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
     //추가된 소스, ToolBar에 menu.xml을 인플레이트함
@@ -143,14 +144,12 @@ public class MainActivity extends AppCompatActivity
         // 권한 요청 전에 초기 셋팅
         updateLocationUI();
 
-        //
+        // 초기 디바이스 위치 셋팅
         getDeviceLocation();
 
         // 현재 위치 이동
         searchCurrentPlaces();
     }
-
-
 
     private void updateLocationUI() {
         if (mGoogleMap == null) {
@@ -190,13 +189,27 @@ public class MainActivity extends AppCompatActivity
          * null in rare cases when a location is not available.
          */
         if (mLocationPermissionGranted) {
-            locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    MIN_TIME_BW_UPDATES,
-                    MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-            if (locationManager != null) {
-                mLastKnownLocation = locationManager
-                        .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (isNetworkEnabled) {
+                locationManager.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER,
+                        MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                if (locationManager != null) {
+                    mLastKnownLocation = locationManager
+                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+            }
+            if (isGPSEnabled) {
+                if (mLastKnownLocation == null) {
+                    locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            MIN_TIME_BW_UPDATES,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    if (locationManager != null) {
+                        mLastKnownLocation = locationManager
+                                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    }
+                }
             }
         }
 
@@ -223,26 +236,31 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+             @Override
+             public void onMapClick(LatLng latLng) {
+                 // 현재 위도와 경도에서 화면 포인트를 알려준다
+                 Point screenPt = mGoogleMap.getProjection().toScreenLocation(latLng);
+                 // 현재 화면에 찍힌 포인트로 부터 위도와 경도를 알려준다.
+                 LatLng clickPoint = mGoogleMap.getProjection().fromScreenLocation(screenPt);
+                 Log.d(TAG, "좌표: 위도(" + String.valueOf(clickPoint.latitude) + "), 경도("
+                         + String.valueOf(clickPoint.longitude) + ")");
+                 searchClickPoint(latLng);
+             }
+         });
+//        mGoogleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+//            @Override
+//            public void onMyLocationChange(Location location) {
+//                Log.d(TAG, "onMyLocationChange: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
+//                        mLastKnownLocation.getLongitude());
+//                mLastKnownLocation = location;
+//            }
+//        });
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);        // 지도에 줌버튼 보이게
         mGoogleMap.getUiSettings().setZoomGesturesEnabled(true);
         mGoogleMap.getUiSettings().setCompassEnabled(true);               //나침반이 나타나도록 설정
-        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));     // 매끄럽게 이동함
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(ZOOM_LEVEL));     // 매끄럽게 이동함
         setLocationMarker(defaultPoint, defaultTitle, defaultSnippet);
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     public void setLocationMarker(LatLng latLng, String title, String snippet) {
@@ -252,6 +270,49 @@ public class MainActivity extends AppCompatActivity
         mGoogleMap.setMinZoomPreference(ZOOM_LEVEL);
     }
 
+//    private void searchCurrentPlaces() {
+//        if (mGoogleMap == null) {
+//            return;
+//        }
+//        if (mLocationPermissionGranted) {
+//            // Get the likely places - that is, the businesses and other points of interest that
+//            // are the best match for the device's current location.
+//            PoiRequest request = new PoiRequest.PoiRequestBuilder("")
+//                    .setLat(mLastKnownLocation.getLatitude())
+//                    .setLng(mLastKnownLocation.getLongitude())
+//                    .build();
+//
+//            Log.d(TAG, "searchCurrentPlaces: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
+//                    mLastKnownLocation.getLongitude());
+//
+//           client.getPoiSearch(request, new OnSuccessListener<PoiResponse>() {
+//               @Override
+//               public void onSuccess(@NonNull PoiResponse poiResponse) {
+//                   if(poiResponse.getPois().size() > 0) {
+//                       setLocationMarker(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()),
+//                               poiResponse.getPois().get(0).getName(),
+//                               poiResponse.getPois().get(0).getAddress().getFullAddressParcel());
+//                       return;
+//                   }
+//                   setLocationMarker(defaultPoint, defaultTitle, defaultSnippet);
+//               }
+//
+//               @Override
+//               public void onError(@NonNull Throwable throwable) {
+//                   Log.d(TAG, throwable.getMessage());
+//               }
+//           });
+//
+//
+//        } else {
+//            // Add a default marker, because the user hasn't selected a place.
+//            setLocationMarker(defaultPoint, defaultTitle, defaultSnippet);
+//            // 다시 권한 요청
+//            getDeviceLocation();
+//        }
+//    }
+
+    // 위도 경도로 정확한 POI 검색이 안된다. GeoCode로 바꿔봐야 할 듯.
     private void searchCurrentPlaces() {
         if (mGoogleMap == null) {
             return;
@@ -267,24 +328,9 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG, "searchCurrentPlaces: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
                     mLastKnownLocation.getLongitude());
 
-           client.getPoiSearch(request, new OnSuccessListener<PoiResponse>() {
-               @Override
-               public void onSuccess(@NonNull PoiResponse poiResponse) {
-                   if(poiResponse.getPois().size() > 0) {
-                       setLocationMarker(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()),
-                               poiResponse.getPois().get(0).getName(),
-                               poiResponse.getPois().get(0).getAddress().getFullAddressParcel());
-                       return;
-                   }
-                   setLocationMarker(defaultPoint, defaultTitle, defaultSnippet);
-               }
+            LatLng latLng = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
 
-               @Override
-               public void onError(@NonNull Throwable throwable) {
-                   Log.d(TAG, throwable.getMessage());
-               }
-           });
-
+            callPoiSearch(request, latLng);
 
         } else {
             // Add a default marker, because the user hasn't selected a place.
@@ -292,6 +338,48 @@ public class MainActivity extends AppCompatActivity
             // 다시 권한 요청
             getDeviceLocation();
         }
+    }
+
+    public void searchClickPoint(LatLng clickPoint) {
+        if (mLocationPermissionGranted) {
+            // Get the likely places - that is, the businesses and other points of interest that
+            // are the best match for the device's current location.
+            PoiRequest request = new PoiRequest.PoiRequestBuilder("")
+                    .setLat(clickPoint.latitude)
+                    .setLng(clickPoint.longitude)
+                    .build();
+
+            Log.d(TAG, "searchClickPoint: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
+                    mLastKnownLocation.getLongitude());
+
+            callPoiSearch(request, clickPoint);
+
+        } else {
+            // Add a default marker, because the user hasn't selected a place.
+            setLocationMarker(defaultPoint, defaultTitle, defaultSnippet);
+            // 다시 권한 요청
+            getDeviceLocation();
+        }
+    }
+
+    public void callPoiSearch(PoiRequest request, final LatLng latLng) {
+        client.getPoiSearch(request, new OnSuccessListener<PoiResponse>() {
+            @Override
+            public void onSuccess(@NonNull PoiResponse poiResponse) {
+                if(poiResponse.getPois().size() > 0) {
+                    setLocationMarker(latLng,
+                            poiResponse.getPois().get(0).getName(),
+                            poiResponse.getPois().get(0).getAddress().getFullAddressParcel());
+                    return;
+                }
+                setLocationMarker(defaultPoint, defaultTitle, defaultSnippet);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable throwable) {
+                Log.d(TAG, throwable.getMessage());
+            }
+        });
     }
 
     @Override
@@ -311,29 +399,23 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "onLocationChanged: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
-                mLastKnownLocation.getLongitude());
         mLastKnownLocation = location;
+        Log.d("ddd", "onLocationChanged: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
+                mLastKnownLocation.getLongitude());
     }
 
     @Override
-    public void onMapClick(LatLng latLng) {
-        // 현재 위도와 경도에서 화면 포인트를 알려준다
-        Point screenPt = mGoogleMap.getProjection().toScreenLocation(latLng);
+    public void onStatusChanged(String provider, int status, Bundle extras) {
 
-        // 현재 화면에 찍힌 포인트로 부터 위도와 경도를 알려준다.
-        LatLng clickPoint = mGoogleMap.getProjection().fromScreenLocation(screenPt);
-
-        Log.d("ddd", "좌표: 위도(" + String.valueOf(clickPoint.latitude) + "), 경도("
-                + String.valueOf(clickPoint.longitude) + ")");
-        Log.d("ddd", "화면좌표: X(" + String.valueOf(screenPt.x) + "), Y("
-                + String.valueOf(screenPt.y) + ")");
     }
 
     @Override
-    public void onMyLocationChange(Location location) {
-        Log.d(TAG, "onMyLocationChange: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
-                mLastKnownLocation.getLongitude());
-        mLastKnownLocation = location;
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
