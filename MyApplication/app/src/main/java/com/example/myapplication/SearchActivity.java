@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.kt.place.sdk.listener.OnSuccessListener;
+import com.kt.place.sdk.model.Poi;
 import com.kt.place.sdk.net.PoiRequest;
 import com.kt.place.sdk.net.PoiResponse;
 import com.kt.place.sdk.util.Client;
@@ -22,6 +23,8 @@ public class SearchActivity extends AppCompatActivity {
     private RecyclerAdapter mAdapter;
     private Toolbar myToolbar;
     private LatLng currentPoint;
+    private double currentPointLat;
+    private double currentPointLng;
     private SearchView searchView;
     private RecyclerView recyclerView;
     private Client client;
@@ -36,7 +39,8 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initView() {
-//        getIntentDate();
+        getIntentDate();
+
         client = new Client();
 
         // Toolbar 초기화
@@ -54,7 +58,9 @@ public class SearchActivity extends AppCompatActivity {
 
     private void getIntentDate(){
         Intent intent = getIntent();
-//        currentPoint = (LatLng) intent.getSerializableExtra("currentPoint");
+        currentPointLat = intent.getExtras().getDouble("currentPoint.lat");
+        currentPointLng = intent.getExtras().getDouble("currentPoint.lng");
+        currentPoint = new LatLng(currentPointLat, currentPointLng);
     }
 
     @Override
@@ -90,8 +96,8 @@ public class SearchActivity extends AppCompatActivity {
 
     public void requestPoiSearch(final String terms) {
         PoiRequest request = new PoiRequest.PoiRequestBuilder(terms)
-                .setLat(37.47171799315875)
-                .setLng(127.02825885458788)
+                .setLat(currentPoint.latitude)
+                .setLng(currentPoint.longitude)
                 .build();
 
         client.getPoiSearch(request, new OnSuccessListener<PoiResponse>() {
@@ -111,5 +117,14 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    public void setIntentData(Poi clickPoi) {
+        Intent resultIntent = new Intent();
+        // POI ID 넘기기
+        resultIntent.putExtra("resultId", clickPoi.getId());
+        resultIntent.putExtra("resultLat", clickPoi.getPoint().getLat());
+        resultIntent.putExtra("resultLng", clickPoi.getPoint().getLng());
+        setResult(RESULT_OK, resultIntent);
+        finish();
+    }
 
 }

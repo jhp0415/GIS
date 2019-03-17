@@ -16,7 +16,7 @@ import java.util.List;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     private List<Poi> items = new ArrayList<>();
-    private Context mContext = null;
+    private Context mContext;
 
     public RecyclerAdapter(Context context) {
         this.mContext = context;
@@ -54,6 +54,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 // 추후 아이템 클릭시 이전 액티비티로 이동해 지도에 마커 찍기 구현
                 // intent
                 Toast.makeText(mContext, String.format("%d번 아이템 선택", position), Toast.LENGTH_SHORT).show();
+                // 인텐트 호출
+                ((SearchActivity) mContext).setIntentData(holder.mItem);
+
             }
         });
     }

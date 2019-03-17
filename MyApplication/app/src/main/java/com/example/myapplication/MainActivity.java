@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -55,7 +56,6 @@ public class MainActivity extends AppCompatActivity
 
     private Client client;
     private final String TAG = "ddd";
-    private GPSInfo gps;
     private LocationManager locationManager;
     // 현재 GPS 사용유무
     boolean isGPSEnabled = false;
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         Manager.initialize(getApplicationContext(),
                 "Bearer eb142d9027f84d51a4a20df8490e44bcf6fc7ef4dea64cae96a7fca282ebd8cc02764651");
         client = new Client();
-        gps = new GPSInfo(getApplicationContext());
+//        gps = new GPSInfo(getApplicationContext());
         locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
         // GPS 정보 가져오기
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -124,8 +124,9 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_main_plus:
                 Intent intent2 = new Intent(MainActivity.this, SearchActivity.class);
-                intent2.putExtra("currentPoint", currentPoint);
-                startActivity(intent2);
+                intent2.putExtra("currentPoint.lat", mLastKnownLocation.getLatitude());
+                intent2.putExtra("currentPoint.lng", mLastKnownLocation.getLongitude());
+                startActivityForResult(intent2, 1);
                 return true;
 
             default:
@@ -133,6 +134,20 @@ public class MainActivity extends AppCompatActivity
                 // Invoke the superclass to handle it.
                 Toast.makeText(getApplicationContext(), "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show();
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 1:
+                    String resultId = data.getExtras().getString("resultPoi");
+                    LatLng resultPoint = new LatLng(data.getExtras().getDouble("resultLat"),
+                            data.getExtras().getDouble("resultLng"));
+                    setLocationMarker(resultPoint, resultId, "Poi Search 결과");
+            }
         }
     }
 
@@ -245,7 +260,7 @@ public class MainActivity extends AppCompatActivity
                  LatLng clickPoint = mGoogleMap.getProjection().fromScreenLocation(screenPt);
                  Log.d(TAG, "좌표: 위도(" + String.valueOf(clickPoint.latitude) + "), 경도("
                          + String.valueOf(clickPoint.longitude) + ")");
-                 searchClickPoint(latLng);
+                 searchPoiPlaces(latLng);
              }
          });
 //        mGoogleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
@@ -340,7 +355,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void searchClickPoint(LatLng clickPoint) {
+    public void searchPoiPlaces(LatLng clickPoint) {
+        if (mGoogleMap == null) {
+            return;
+        }
         if (mLocationPermissionGranted) {
             // Get the likely places - that is, the businesses and other points of interest that
             // are the best match for the device's current location.
@@ -349,7 +367,7 @@ public class MainActivity extends AppCompatActivity
                     .setLng(clickPoint.longitude)
                     .build();
 
-            Log.d(TAG, "searchClickPoint: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
+            Log.d(TAG, "searchPoiPlaces: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
                     mLastKnownLocation.getLongitude());
 
             callPoiSearch(request, clickPoint);
