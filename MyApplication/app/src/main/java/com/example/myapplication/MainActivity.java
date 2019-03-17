@@ -1,12 +1,14 @@
 package com.example.myapplication;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -69,10 +71,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_main);
         initView();
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void initView() {
         // 구글맵 객체 생성
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -85,6 +91,11 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);  // 왼쪽 버튼 사용 여부 true
 //        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);  // 왼쪽 버튼 이미지 설정
         getSupportActionBar().setDisplayShowTitleEnabled(false);    // 타이틀 안보이게 하기
+//        // Set the padding to match the Status Bar height
+//        myToolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+//        getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+//        getWindow().setStatusBarColor(Color.TRANSPARENT);
+
 
         defaultMarkerOption = new MarkerOptions();
         defaultMarkerOption.position(defaultPoint);
@@ -101,6 +112,17 @@ public class MainActivity extends AppCompatActivity
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         // 현재 네트워크 상태 값 알아오기
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    //status bar의 높이 계산
+    public int getStatusBarHeight()
+    {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0)
+            result = getResources().getDimensionPixelSize(resourceId);
+
+        return result;
     }
 
     //추가된 소스, ToolBar에 menu.xml을 인플레이트함
