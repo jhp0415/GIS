@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         //return super.onCreateOptionsMenu(menu);
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.search_menu, menu);
+        menuInflater.inflate(R.menu.main_search_menu, menu);
         return true;
     }
 
@@ -117,11 +117,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         //return super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
-            case R.id.action_search_view:
-                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                startActivity(intent);
-                return true;
-
             case R.id.action_main_plus:
                 Intent intent2 = new Intent(MainActivity.this, SearchActivity.class);
                 intent2.putExtra("currentPoint.lat", mLastKnownLocation.getLatitude());
@@ -143,10 +138,10 @@ public class MainActivity extends AppCompatActivity
         if(resultCode == RESULT_OK) {
             switch (requestCode) {
                 case 1:
-                    String resultId = data.getExtras().getString("resultPoi");
+                    String resultId = data.getExtras().getString("resultId");
                     LatLng resultPoint = new LatLng(data.getExtras().getDouble("resultLat"),
                             data.getExtras().getDouble("resultLng"));
-                    setLocationMarker(resultPoint, resultId, "Poi Search 결과");
+                    setLocationMarker(resultPoint, resultId, "Search 결과");
             }
         }
     }

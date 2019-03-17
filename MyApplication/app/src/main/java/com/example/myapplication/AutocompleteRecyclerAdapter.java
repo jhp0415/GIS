@@ -6,19 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.kt.place.sdk.model.Poi;
+import com.kt.place.sdk.model.Suggest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+public class AutocompleteRecyclerAdapter extends RecyclerView.Adapter<AutocompleteRecyclerAdapter.ViewHolder> {
 
-    private List<Poi> items = new ArrayList<>();
+    private List<Suggest> items = new ArrayList<>();
     private Context mContext;
 
-    public RecyclerAdapter(Context context) {
+    public AutocompleteRecyclerAdapter(Context context) {
         this.mContext = context;
     }
 
@@ -36,7 +35,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     //이부분 중요!! 검색 리스트를 나오게하기 위해 꼭 필요
-    public void setFilter(List<Poi> items) {
+    public void setFilter(List<Suggest> items) {
         this.items.clear();
         this.items.addAll(items);
         notifyDataSetChanged();     // 데이터 업데이트
@@ -45,18 +44,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = items.get(position);
-        holder.mTitleText.setText(items.get(position).getName());
-        holder.mDescriptionText.setText(items.get(position).getAddress().getFullAddressParcel());
-        holder.mDistance.setText(String.valueOf((int) Math.round(items.get(position).getDistance())));
+        holder.mTitleText.setText(items.get(position).getTerms());
+        holder.mDescriptionText.setText(items.get(position).getPoiId());
+//        holder.mDistance.setText(items.get(position).getDistance().toString());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 아이템 클릭 리스너
-                // 추후 아이템 클릭시 이전 액티비티로 이동해 지도에 마커 찍기 구현
-                // intent
-                Toast.makeText(mContext, String.format("%d번 아이템 선택", position), Toast.LENGTH_SHORT).show();
                 // 인텐트 호출
-                ((SearchActivity) mContext).setIntentData(holder.mItem);
+                ((SearchActivity) mContext).setAutocompleteIntentData(holder.mItem);
 
             }
         });
@@ -64,18 +59,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public Poi mItem;
+        public Suggest mItem;
         public final View mView;
         public final TextView mTitleText;
         public final TextView mDescriptionText;
-        public final TextView mDistance;
+//        public final TextView mDistance;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;       // View 초기화
             mTitleText = (TextView) view.findViewById(R.id.title);
             mDescriptionText = (TextView) view.findViewById(R.id.description);
-            mDistance = (TextView) view.findViewById(R.id.distance);
+//            mDistance = (TextView) view.findViewById(R.id.distance);
         }
     }
 }

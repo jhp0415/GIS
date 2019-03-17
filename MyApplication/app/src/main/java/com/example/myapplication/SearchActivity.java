@@ -15,20 +15,26 @@ import android.view.MenuInflater;
 import com.google.android.gms.maps.model.LatLng;
 import com.kt.place.sdk.listener.OnSuccessListener;
 import com.kt.place.sdk.model.Poi;
+import com.kt.place.sdk.model.Suggest;
+import com.kt.place.sdk.net.AutocompleteRequest;
+import com.kt.place.sdk.net.AutocompleteResponse;
 import com.kt.place.sdk.net.PoiRequest;
 import com.kt.place.sdk.net.PoiResponse;
 import com.kt.place.sdk.util.Client;
 
 public class SearchActivity extends AppCompatActivity {
     private RecyclerAdapter mAdapter;
+    private AutocompleteRecyclerAdapter mAutocompleteAdapter;
     private Toolbar myToolbar;
     private LatLng currentPoint;
     private double currentPointLat;
     private double currentPointLng;
     private SearchView searchView;
     private RecyclerView recyclerView;
+    private RecyclerView autocompleteRecyclerView;
     private Client client;
-    private PoiResponse result;
+    private PoiResponse poiResult;
+    private AutocompleteResponse autocompleteResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +55,18 @@ public class SearchActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);    // 타이틀 안보이게 하기
 
         // RecyclerView 초기화
-        recyclerView = (RecyclerView) findViewById(R.id.notice_search_recycler);
+        recyclerView = (RecyclerView) findViewById(R.id.poi_search_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         mAdapter = new RecyclerAdapter(this);
         recyclerView.setAdapter(mAdapter);
+
+        // Autocomplete RecyclerView 초기화
+        autocompleteRecyclerView = (RecyclerView) findViewById(R.id.autocomplete_search_recycler);
+        autocompleteRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        autocompleteRecyclerView.setHasFixedSize(true);
+        mAutocompleteAdapter = new AutocompleteRecyclerAdapter(this);
+        autocompleteRecyclerView.setAdapter(mAutocompleteAdapter);
     }
 
     private void getIntentDate(){
@@ -61,6 +74,25 @@ public class SearchActivity extends AppCompatActivity {
         currentPointLat = intent.getExtras().getDouble("currentPoint.lat");
         currentPointLng = intent.getExtras().getDouble("currentPoint.lng");
         currentPoint = new LatLng(currentPointLat, currentPointLng);
+    }
+
+    public void setIntentData(Poi poi) {
+        Intent resultIntent = new Intent();
+        // POI ID 넘기기
+        resultIntent.putExtra("resultId", poi.getId());
+        resultIntent.putExtra("resultLat", poi.getPoint().getLat());
+        resultIntent.putExtra("resultLng", poi.getPoint().getLng());
+        setResult(RESULT_OK, resultIntent);
+        finish();
+    }
+
+    public void setAutocompleteIntentData(Suggest suggest) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("resultId", suggest.getTerms());
+        resultIntent.putExtra("resultLat", suggest.getPoint().getLat());
+        resultIntent.putExtra("resultLng", suggest.getPoint().getLng());
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     @Override
@@ -81,6 +113,7 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 Log.i("onQueryTextChange", newText);
                 requestPoiSearch(newText);
+                requestAutocomplete(newText);
                 return true;
             }
 
@@ -88,6 +121,7 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 Log.i("onQueryTextSubmit", query);
                 requestPoiSearch(query);
+                requestAutocomplete(query);
                 return true;
             }
         });
@@ -104,9 +138,9 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull PoiResponse poiResponse) {
                 if(poiResponse.getNumberOfPois() > 0) {
-                    Log.d("ddd", "success " + poiResponse.getPois().get(0).getName());
-                    result = poiResponse;
-                    mAdapter.setFilter(result.getPois());
+                    Log.d("ddd", "POI " + poiResponse.getPois().get(0).getName());
+                    poiResult = poiResponse;
+                    mAdapter.setFilter(poiResult.getPois());
                 }
             }
 
@@ -117,14 +151,26 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    public void setIntentData(Poi clickPoi) {
-        Intent resultIntent = new Intent();
-        // POI ID 넘기기
-        resultIntent.putExtra("resultId", clickPoi.getId());
-        resultIntent.putExtra("resultLat", clickPoi.getPoint().getLat());
-        resultIntent.putExtra("resultLng", clickPoi.getPoint().getLng());
-        setResult(RESULT_OK, resultIntent);
-        finish();
-    }
+    public void requestAutocomplete(final String terms) {
+        AutocompleteRequest request = new AutocompleteRequest.AutocompleteRequestBuilder(terms)
+                .setLat(currentPoint.latitude)
+                .setLng(currentPoint.longitude)
+                .build();
 
+        client.getAutocomplete(request, new OnSuccessListener<AutocompleteResponse>() {
+            @Override
+            public void onSuccess(@NonNull AutocompleteResponse autocompleteResponse) {
+                if(autocompleteResponse.getSuggestList().size() > 0) {
+                    Log.d("ddd", "Autocomplete " + autocompleteResponse.getSuggestList().size());
+                    autocompleteResult = autocompleteResponse;
+                    mAutocompleteAdapter.setFilter(autocompleteResult.getSuggestList());
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable throwable) {
+                Log.d("ddd", throwable.getMessage());
+            }
+        });
+    }
 }
