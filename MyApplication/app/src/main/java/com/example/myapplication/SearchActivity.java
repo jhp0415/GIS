@@ -108,6 +108,7 @@ public class SearchActivity extends AppCompatActivity
                     mNextStartIndex = mLastKnowIndex + 1;
                     Log.d("ddd", mNextStartIndex + " 번째 호출하기");
                     requestPoiSearch(finalTerms, mNextStartIndex);
+                    recyclerView.scrollToPosition(0);
                 }
             }
         });
@@ -148,8 +149,6 @@ public class SearchActivity extends AppCompatActivity
         searchView = (SearchView)menu.findItem(R.id.action_poi_search).getActionView();
         searchView.setSubmitButtonEnabled(true);
         searchView.setQueryHint("검색어를 입력하세요.");
-//        SearchManager searchManager = (SearchManager) this.getSystemService(Context.SEARCH_SERVICE);
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(this.getComponentName()));
         searchView.onActionViewExpanded(); //바로 검색 할 수 있도록
 
         // SearchView 검색어 입력/검색 이벤트 처리리
@@ -168,10 +167,6 @@ public class SearchActivity extends AppCompatActivity
                 Log.i("onQueryTextSubmit", query);
                 requestPoiSearch(query, mNextStartIndex);
                 requestAutocomplete(query);
-                if (mTotalIndex == 0) {
-                    mTotalIndex = poiResult.getNumberOfPois();
-                }
-                Log.d("ddd", mLastKnowIndex + " 번째 까지 가져옴, mTotalIndex : " + mTotalIndex);
                 return true;
             }
         });
@@ -182,13 +177,14 @@ public class SearchActivity extends AppCompatActivity
         PoiRequest request = new PoiRequest.PoiRequestBuilder(terms)
                 .setLat(currentPoint.latitude)
                 .setLng(currentPoint.longitude)
-//                .setNumberOfResults(nextStartIndex)
+                .setStart(nextStartIndex)
+                .setNumberOfResults(10)
                 .build();
 
         client.getPoiSearch(request, new OnSuccessListener<PoiResponse>() {
             @Override
             public void onSuccess(@NonNull PoiResponse poiResponse) {
-                if(poiResponse.getNumberOfPois() > 0) {
+                if(poiResponse.getPois().size() > 0) {
                     Log.d("ddd", "POI " + poiResponse.getPois().get(0).getName());
                     poiResult = poiResponse;
                     mAdapter.setFilter(poiResult.getPois());
@@ -230,8 +226,10 @@ public class SearchActivity extends AppCompatActivity
         // 새로고침 코드
         // mNextStartIndex = 0 으로 다시 호출
         requestPoiSearch(finalTerms, 0);
-
+        mNextStartIndex = 0;
+        mLastKnowIndex = -1;
         // 새로고침 종료
         swipeRefreshLayout.setRefreshing(false);
+        Log.d("ddd", "새로고침");
     }
 }

@@ -18,6 +18,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private List<Poi> items = new ArrayList<>();
     private Context mContext;
 
+
     public RecyclerAdapter(Context context) {
         this.mContext = context;
     }

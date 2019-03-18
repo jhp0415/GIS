@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity
                  LatLng clickPoint = mGoogleMap.getProjection().fromScreenLocation(screenPt);
                  Log.d(TAG, "좌표: 위도(" + String.valueOf(clickPoint.latitude) + "), 경도("
                          + String.valueOf(clickPoint.longitude) + ")");
-                 searchPoiPlaces(latLng);
+                 searchPoiPlaces(clickPoint);
              }
          });
 
