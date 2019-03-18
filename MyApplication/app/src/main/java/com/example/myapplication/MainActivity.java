@@ -2,6 +2,8 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -22,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.myapplication.fragment.SearchFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -71,10 +74,13 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
         initView();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void initView() {
         // 구글맵 객체 생성
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -147,6 +153,16 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
+    public void replaceFragment()
+    {
+        SearchFragment searchFragment = new SearchFragment();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_main, searchFragment);
+        fragmentTransaction.commit();
+    }
+
 
     //지도 준비사항 -> 초기 위치 설정, 위피 퍼미션 설정
     @Override
