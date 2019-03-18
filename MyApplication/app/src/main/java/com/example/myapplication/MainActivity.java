@@ -1,20 +1,17 @@
 package com.example.myapplication;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +29,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.kt.place.sdk.listener.OnSuccessListener;
+import com.kt.place.sdk.model.Poi;
+import com.kt.place.sdk.model.Suggest;
 import com.kt.place.sdk.net.PoiRequest;
 import com.kt.place.sdk.net.PoiResponse;
 import com.kt.place.sdk.util.Client;
@@ -39,11 +38,12 @@ import com.kt.place.sdk.util.Manager;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
-        LocationListener {
+        LocationListener,
+        SearchFragment.OnSearchedCallbackListener {
 
     private Toolbar myToolbar;
     private GoogleMap mGoogleMap = null;
-    private Location mLastKnownLocation = null;
+    public Location mLastKnownLocation = null;
     private LatLng defaultPoint = new LatLng(37.57248123626738, 126.97783713788459);        //kT광화문west
     private String defaultTitle = "위치정보 가져올 수 없음";
     private String defaultSnippet = "위치 퍼미션과 GPS 활성 여부 확인";
@@ -80,7 +80,27 @@ public class MainActivity extends AppCompatActivity
         initView();
     }
 
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof SearchFragment) {
+            SearchFragment searchFragment = (SearchFragment) fragment;
+            searchFragment.setOnSearchedCallbackListener(this);
+        }
+    }
+
+
+
+    public void replaceFragment()
+    {
+        SearchFragment searchFragment = new SearchFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_main, searchFragment);
+        fragmentTransaction.addToBackStack(null);       // 프래그먼트를 백스택에 저장
+        fragmentTransaction.commit();
+    }
+
     public void initView() {
         // 구글맵 객체 생성
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -126,10 +146,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_main_plus:
-                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                intent.putExtra("currentPoint.lat", mLastKnownLocation.getLatitude());
-                intent.putExtra("currentPoint.lng", mLastKnownLocation.getLongitude());
-                startActivityForResult(intent, 1);
+                Log.d("ddd", "검색 버튼 클릭");
+                replaceFragment();
                 return true;
 
             default:
@@ -140,28 +158,34 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case 1:
-                    String resultId = data.getExtras().getString("resultId");
-                    LatLng resultPoint = new LatLng(data.getExtras().getDouble("resultLat"),
-                            data.getExtras().getDouble("resultLng"));
-                    setLocationMarker(resultPoint, resultId, "Search 결과");
-            }
-        }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(resultCode == RESULT_OK) {
+//            switch (requestCode) {
+//                case 1:
+//                    String resultId = data.getExtras().getString("resultId");
+//                    LatLng resultPoint = new LatLng(data.getExtras().getDouble("resultLat"),
+//                            data.getExtras().getDouble("resultLng"));
+//                    setLocationMarker(resultPoint, resultId, "Search 결과");
+//            }
+//        }
+//    }
+
+    public void onFragmentResult(Poi data) {
+        String resultTerms = data.getName();
+        LatLng resultPoint = new LatLng(data.getPoint().getLat(),
+                data.getPoint().getLng());
+        setLocationMarker(resultPoint, resultTerms, data.getAddress().getFullAddressParcel());
     }
 
-    public void replaceFragment()
-    {
-        SearchFragment searchFragment = new SearchFragment();
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_main, searchFragment);
-        fragmentTransaction.commit();
+    public void onFragmentResultAutocomplete(Suggest data) {
+        String resultTerms = data.getPoiId();
+        LatLng resultPoint = new LatLng(data.getPoint().getLat(),
+                data.getPoint().getLng());
+        setLocationMarker(resultPoint, resultTerms, data.getPoiId());
     }
+
 
 
     //지도 준비사항 -> 초기 위치 설정, 위피 퍼미션 설정
@@ -400,4 +424,6 @@ public class MainActivity extends AppCompatActivity
     public void onProviderDisabled(String provider) {
 
     }
+
+   
 }

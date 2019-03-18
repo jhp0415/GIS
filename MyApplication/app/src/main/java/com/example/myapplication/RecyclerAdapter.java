@@ -57,7 +57,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 // intent
                 Toast.makeText(mContext, String.format("%d번 아이템 선택", position), Toast.LENGTH_SHORT).show();
                 // 인텐트 호출
-                ((SearchActivity) mContext).setIntentData(holder.mItem);
+//                ((SearchActivity) mContext).setIntentData(holder.mItem);
+//                ((SearchFragment) mContext).setIntentData(holder.mItem);
 
             }
         });
