@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.AbsListView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.kt.place.sdk.listener.OnSuccessListener;
@@ -22,7 +25,8 @@ import com.kt.place.sdk.net.PoiRequest;
 import com.kt.place.sdk.net.PoiResponse;
 import com.kt.place.sdk.util.Client;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity
+        implements SwipeRefreshLayout.OnRefreshListener {
     private RecyclerAdapter mAdapter;
     private AutocompleteRecyclerAdapter mAutocompleteAdapter;
     private Toolbar myToolbar;
@@ -35,6 +39,20 @@ public class SearchActivity extends AppCompatActivity {
     private Client client;
     private PoiResponse poiResult;
     private AutocompleteResponse autocompleteResult;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    private boolean isLoading = false;
+    private int mCurrentPage = 0; // 현재 페이지 번호
+    private int mTotalPage = 0; // 전체 페이지 번호
+    private int mItemCount= 10; // 화면에 보여줄 항목 수
+
+    private int mLastKnowIndex = -1; // 현재까지 보여준 poi 인덱스
+    private int mNextStartIndex = 0;    // 다음 호출할 poi 번호
+    private int mTotalIndex = 0;
+    private int numberOfResults = 10;
+
+    private int refresh = 0;
+    private String finalTerms = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +85,35 @@ public class SearchActivity extends AppCompatActivity {
         autocompleteRecyclerView.setHasFixedSize(true);
         mAutocompleteAdapter = new AutocompleteRecyclerAdapter(this);
         autocompleteRecyclerView.setAdapter(mAutocompleteAdapter);
+
+        // SwipeRefreshLayout
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int lastVisibleItemPosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                int itemTotalCount = recyclerView.getAdapter().getItemCount() - 1;
+
+                if (lastVisibleItemPosition == itemTotalCount) {
+                    // 다음 리스트 받아오기
+                    mLastKnowIndex = mLastKnowIndex + numberOfResults;
+                    mNextStartIndex = mLastKnowIndex + 1;
+                    Log.d("ddd", mNextStartIndex + " 번째 호출하기");
+                    requestPoiSearch(finalTerms, mNextStartIndex);
+                }
+            }
+        });
+
     }
+
 
     private void getIntentDate(){
         Intent intent = getIntent();
@@ -78,7 +124,6 @@ public class SearchActivity extends AppCompatActivity {
 
     public void setIntentData(Poi poi) {
         Intent resultIntent = new Intent();
-        // POI ID 넘기기
         resultIntent.putExtra("resultId", poi.getId());
         resultIntent.putExtra("resultLat", poi.getPoint().getLat());
         resultIntent.putExtra("resultLng", poi.getPoint().getLng());
@@ -88,7 +133,7 @@ public class SearchActivity extends AppCompatActivity {
 
     public void setAutocompleteIntentData(Suggest suggest) {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("resultId", suggest.getTerms());
+        resultIntent.putExtra("resultId", suggest.getPoiId());
         resultIntent.putExtra("resultLat", suggest.getPoint().getLat());
         resultIntent.putExtra("resultLng", suggest.getPoint().getLng());
         setResult(RESULT_OK, resultIntent);
@@ -112,7 +157,8 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i("onQueryTextChange", newText);
-                requestPoiSearch(newText);
+                finalTerms = newText;
+                requestPoiSearch(newText, mNextStartIndex);
                 requestAutocomplete(newText);
                 return true;
             }
@@ -120,18 +166,23 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i("onQueryTextSubmit", query);
-                requestPoiSearch(query);
+                requestPoiSearch(query, mNextStartIndex);
                 requestAutocomplete(query);
+                if (mTotalIndex == 0) {
+                    mTotalIndex = poiResult.getNumberOfPois();
+                }
+                Log.d("ddd", mLastKnowIndex + " 번째 까지 가져옴, mTotalIndex : " + mTotalIndex);
                 return true;
             }
         });
         return true;
     }
 
-    public void requestPoiSearch(final String terms) {
+    public void requestPoiSearch(final String terms, int nextStartIndex) {
         PoiRequest request = new PoiRequest.PoiRequestBuilder(terms)
                 .setLat(currentPoint.latitude)
                 .setLng(currentPoint.longitude)
+//                .setNumberOfResults(nextStartIndex)
                 .build();
 
         client.getPoiSearch(request, new OnSuccessListener<PoiResponse>() {
@@ -172,5 +223,15 @@ public class SearchActivity extends AppCompatActivity {
                 Log.d("ddd", throwable.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        // 새로고침 코드
+        // mNextStartIndex = 0 으로 다시 호출
+        requestPoiSearch(finalTerms, 0);
+
+        // 새로고침 종료
+        swipeRefreshLayout.setRefreshing(false);
     }
 }

@@ -17,38 +17,50 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <LinearLayout
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.7">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/autocomplete_search_recycler"
+            android:orientation="vertical"
+            android:weightSum="1">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:layout_weight="0.7">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/autocomplete_search_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="#BDBDBD">
 
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.3">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/poi_search_recycler"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="5dp"
+                android:background="#BDBDBD">
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/poi_search_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
-
+    <!--ListView 끝에서 다음 데이터 로딩중에 보여줄 프로그레스바-->
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
 
 </LinearLayout>

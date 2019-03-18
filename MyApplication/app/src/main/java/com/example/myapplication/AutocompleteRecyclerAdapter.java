@@ -24,7 +24,7 @@ public class AutocompleteRecyclerAdapter extends RecyclerView.Adapter<Autocomple
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recycler_item, parent, false);
+                .inflate(R.layout.autocomplete_recycler_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -37,7 +37,14 @@ public class AutocompleteRecyclerAdapter extends RecyclerView.Adapter<Autocomple
     //이부분 중요!! 검색 리스트를 나오게하기 위해 꼭 필요
     public void setFilter(List<Suggest> items) {
         this.items.clear();
-        this.items.addAll(items);
+//        this.items.addAll(items);
+        if(items.size() >= 3) {
+            this.items.add(items.get(0));
+            this.items.add(items.get(1));
+            this.items.add(items.get(2));
+        } else {
+            this.items.addAll(items);
+        }
         notifyDataSetChanged();     // 데이터 업데이트
     }
 
@@ -45,7 +52,7 @@ public class AutocompleteRecyclerAdapter extends RecyclerView.Adapter<Autocomple
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = items.get(position);
         holder.mTitleText.setText(items.get(position).getTerms());
-        holder.mDescriptionText.setText(items.get(position).getPoiId());
+//        holder.mDescriptionText.setText(items.get(position).getPoiId());
 //        holder.mDistance.setText(items.get(position).getDistance().toString());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,14 +69,14 @@ public class AutocompleteRecyclerAdapter extends RecyclerView.Adapter<Autocomple
         public Suggest mItem;
         public final View mView;
         public final TextView mTitleText;
-        public final TextView mDescriptionText;
+//        public final TextView mDescriptionText;
 //        public final TextView mDistance;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;       // View 초기화
-            mTitleText = (TextView) view.findViewById(R.id.title);
-            mDescriptionText = (TextView) view.findViewById(R.id.description);
+            mTitleText = (TextView) view.findViewById(R.id.suggest);
+//            mDescriptionText = (TextView) view.findViewById(R.id.description);
 //            mDistance = (TextView) view.findViewById(R.id.distance);
         }
     }

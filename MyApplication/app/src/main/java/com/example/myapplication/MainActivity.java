@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity
     private Toolbar myToolbar;
     private GoogleMap mGoogleMap = null;
     private Location mLastKnownLocation = null;
-    private LatLng currentPoint = null;
     private LatLng defaultPoint = new LatLng(37.57248123626738, 126.97783713788459);        //kT광화문west
     private String defaultTitle = "위치정보 가져올 수 없음";
     private String defaultSnippet = "위치 퍼미션과 GPS 활성 여부 확인";
@@ -64,16 +63,13 @@ public class MainActivity extends AppCompatActivity
     // 네트워크 사용유무
     boolean isNetworkEnabled = false;
     // 최소 GPS 정보 업데이트 거리 1미터
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1;
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     // 최소 GPS 정보 업데이트 시간 밀리세컨(1분)
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(R.layout.activity_main);
         initView();
     }
@@ -91,10 +87,6 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);  // 왼쪽 버튼 사용 여부 true
 //        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);  // 왼쪽 버튼 이미지 설정
         getSupportActionBar().setDisplayShowTitleEnabled(false);    // 타이틀 안보이게 하기
-//        // Set the padding to match the Status Bar height
-//        myToolbar.setPadding(0, getStatusBarHeight(), 0, 0);
-//        getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-//        getWindow().setStatusBarColor(Color.TRANSPARENT);
 
 
         defaultMarkerOption = new MarkerOptions();
@@ -114,17 +106,6 @@ public class MainActivity extends AppCompatActivity
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    //status bar의 높이 계산
-    public int getStatusBarHeight()
-    {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0)
-            result = getResources().getDimensionPixelSize(resourceId);
-
-        return result;
-    }
-
     //추가된 소스, ToolBar에 menu.xml을 인플레이트함
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -137,13 +118,12 @@ public class MainActivity extends AppCompatActivity
     //추가된 소스, ToolBar에 추가된 항목의 select 이벤트를 처리하는 함수
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //return super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.action_main_plus:
-                Intent intent2 = new Intent(MainActivity.this, SearchActivity.class);
-                intent2.putExtra("currentPoint.lat", mLastKnownLocation.getLatitude());
-                intent2.putExtra("currentPoint.lng", mLastKnownLocation.getLongitude());
-                startActivityForResult(intent2, 1);
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.putExtra("currentPoint.lat", mLastKnownLocation.getLatitude());
+                intent.putExtra("currentPoint.lng", mLastKnownLocation.getLongitude());
+                startActivityForResult(intent, 1);
                 return true;
 
             default:
@@ -280,14 +260,7 @@ public class MainActivity extends AppCompatActivity
                  searchPoiPlaces(latLng);
              }
          });
-//        mGoogleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-//            @Override
-//            public void onMyLocationChange(Location location) {
-//                Log.d(TAG, "onMyLocationChange: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
-//                        mLastKnownLocation.getLongitude());
-//                mLastKnownLocation = location;
-//            }
-//        });
+
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);        // 지도에 줌버튼 보이게
         mGoogleMap.getUiSettings().setZoomGesturesEnabled(true);
         mGoogleMap.getUiSettings().setCompassEnabled(true);               //나침반이 나타나도록 설정
@@ -301,48 +274,6 @@ public class MainActivity extends AppCompatActivity
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mGoogleMap.setMinZoomPreference(ZOOM_LEVEL);
     }
-
-//    private void searchCurrentPlaces() {
-//        if (mGoogleMap == null) {
-//            return;
-//        }
-//        if (mLocationPermissionGranted) {
-//            // Get the likely places - that is, the businesses and other points of interest that
-//            // are the best match for the device's current location.
-//            PoiRequest request = new PoiRequest.PoiRequestBuilder("")
-//                    .setLat(mLastKnownLocation.getLatitude())
-//                    .setLng(mLastKnownLocation.getLongitude())
-//                    .build();
-//
-//            Log.d(TAG, "searchCurrentPlaces: mLastKnownLocation -> " + mLastKnownLocation.getLatitude() + ", " +
-//                    mLastKnownLocation.getLongitude());
-//
-//           client.getPoiSearch(request, new OnSuccessListener<PoiResponse>() {
-//               @Override
-//               public void onSuccess(@NonNull PoiResponse poiResponse) {
-//                   if(poiResponse.getPois().size() > 0) {
-//                       setLocationMarker(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()),
-//                               poiResponse.getPois().get(0).getName(),
-//                               poiResponse.getPois().get(0).getAddress().getFullAddressParcel());
-//                       return;
-//                   }
-//                   setLocationMarker(defaultPoint, defaultTitle, defaultSnippet);
-//               }
-//
-//               @Override
-//               public void onError(@NonNull Throwable throwable) {
-//                   Log.d(TAG, throwable.getMessage());
-//               }
-//           });
-//
-//
-//        } else {
-//            // Add a default marker, because the user hasn't selected a place.
-//            setLocationMarker(defaultPoint, defaultTitle, defaultSnippet);
-//            // 다시 권한 요청
-//            getDeviceLocation();
-//        }
-//    }
 
     // 위도 경도로 정확한 POI 검색이 안된다. GeoCode로 바꿔봐야 할 듯.
     private void searchCurrentPlaces() {

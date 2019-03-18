@@ -45,7 +45,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = items.get(position);
-        holder.mTitleText.setText(items.get(position).getName());
+        holder.mTitleText.setText(items.get(position).getName() + " " + items.get(position).getBranch());
         holder.mDescriptionText.setText(items.get(position).getAddress().getFullAddressParcel());
         holder.mDistance.setText(String.valueOf((int) Math.round(items.get(position).getDistance())));
         holder.mView.setOnClickListener(new View.OnClickListener() {
