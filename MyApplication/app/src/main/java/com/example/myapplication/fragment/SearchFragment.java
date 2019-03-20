@@ -1,11 +1,12 @@
 package com.example.myapplication.fragment;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -87,7 +88,7 @@ public class SearchFragment extends Fragment
         mAutocompleteAdapter = new AutocompleteRecyclerAdapter(getActivity());
         autocompleteRecyclerView.setAdapter(mAutocompleteAdapter);
 
-        // SwipeRefreshLayout
+        // SwipeRefreshLayout 초기화
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh_layout2);
         swipeRefreshLayout.setOnRefreshListener(this);
 
@@ -113,7 +114,6 @@ public class SearchFragment extends Fragment
                 }
             }
         });
-
         return view;
     }
 
@@ -121,21 +121,23 @@ public class SearchFragment extends Fragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getIntentDate();
+        getInitDataFromActivity();
+
+
     }
 
     // 메인에서 현재위치 받아오기
-    private void getIntentDate(){
+    private void getInitDataFromActivity(){
         currentLocation = ((MainActivity)getActivity()).mLastKnownLocation;
         currentPoint = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
     }
 
     // 메인 지도에 결과 전달하기
-    public void setIntentData(Poi poi) {
+    public void setPoiResultDataToActivity(Poi poi) {
         ((MainActivity)getActivity()).onFragmentResult(poi);
     }
 
-    public void setAutocompleteIntentData(Suggest suggest) {
+    public void setAutocompleteResultDataToActivity(Suggest suggest) {
         ((MainActivity)getActivity()).onFragmentResultAutocomplete(suggest);
     }
 
@@ -228,10 +230,6 @@ public class SearchFragment extends Fragment
         // 새로고침 종료
         swipeRefreshLayout.setRefreshing(false);
         Log.d("ddd", "새로고침");
-    }
-
-    public void setOnSearchedCallbackListener(Activity activity) {
-        listener = activity;
     }
 
     // Container Activity must implement this interface

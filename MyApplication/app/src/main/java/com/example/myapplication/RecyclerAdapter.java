@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.fragment.SearchFragment;
 import com.kt.place.sdk.model.Poi;
 
 import java.util.ArrayList;
@@ -57,8 +60,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 // intent
                 Toast.makeText(mContext, String.format("%d번 아이템 선택", position), Toast.LENGTH_SHORT).show();
                 // 인텐트 호출
-//                ((SearchActivity) mContext).setIntentData(holder.mItem);
-//                ((SearchFragment) mContext).setIntentData(holder.mItem);
+                ((MainActivity) mContext).onFragmentResult(holder.mItem);
+
 
             }
         });

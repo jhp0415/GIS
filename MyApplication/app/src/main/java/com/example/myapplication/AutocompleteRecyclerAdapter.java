@@ -58,7 +58,7 @@ public class AutocompleteRecyclerAdapter extends RecyclerView.Adapter<Autocomple
             @Override
             public void onClick(View v) {
                 // 인텐트 호출
-                ((SearchActivity) mContext).setAutocompleteIntentData(holder.mItem);
+                ((MainActivity) mContext).onFragmentResultAutocomplete(holder.mItem);
 
             }
         });

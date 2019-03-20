@@ -38,8 +38,7 @@ import com.kt.place.sdk.util.Manager;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
-        LocationListener,
-        SearchFragment.OnSearchedCallbackListener {
+        LocationListener {
 
     private Toolbar myToolbar;
     private GoogleMap mGoogleMap = null;
@@ -79,16 +78,6 @@ public class MainActivity extends AppCompatActivity
 
         initView();
     }
-
-    @Override
-    public void onAttachFragment(Fragment fragment) {
-        super.onAttachFragment(fragment);
-        if (fragment instanceof SearchFragment) {
-            SearchFragment searchFragment = (SearchFragment) fragment;
-            searchFragment.setOnSearchedCallbackListener(this);
-        }
-    }
-
 
 
     public void replaceFragment()
@@ -158,21 +147,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(resultCode == RESULT_OK) {
-//            switch (requestCode) {
-//                case 1:
-//                    String resultId = data.getExtras().getString("resultId");
-//                    LatLng resultPoint = new LatLng(data.getExtras().getDouble("resultLat"),
-//                            data.getExtras().getDouble("resultLng"));
-//                    setLocationMarker(resultPoint, resultId, "Search 결과");
-//            }
-//        }
-//    }
-
     public void onFragmentResult(Poi data) {
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragmentManager.beginTransaction().remove(SearchFragment.this).commit();
+//        fragmentManager.popBackStack();
+
         String resultTerms = data.getName();
         LatLng resultPoint = new LatLng(data.getPoint().getLat(),
                 data.getPoint().getLng());
